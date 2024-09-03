@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ACCESS_KEY: ${S3_ACCESSKEY}
+      MINIO_SECRET_KEY: ${S3_SECRETKEY}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+    command: server /data
+
+  api:
+    build:
+      context: ./api-interface
+      dockerfile: Dockerfile
+    container_name: api-interface
+    environment:
+      MINIO_ENDPOINT: "http://minio:9000"
+      MINIO_ACCESSKEY: ${S3_ACCESSKEY}
+      MINIO_SECRETKEY: ${S3_SECRETKEY}
+      MINIO_BUCKET: ${S3_BUCKET}
+    depends_on:
+      - minio
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-interface:/app
+
+volumes:
+  minio_data:
