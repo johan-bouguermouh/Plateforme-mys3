@@ -26,3 +26,12 @@ func Insert(user *models.User) {
 func Get() []*models.User {
 	return db
 }
+
+func GetByName( name string) *models.User {
+	for _, user := range db {
+		if user.Name == name {
+			return user
+		}
+	}
+	return nil
+}
