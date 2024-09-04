@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"api-interface/controllers"
-
 	"github.com/gofiber/fiber/v2"
 )
 

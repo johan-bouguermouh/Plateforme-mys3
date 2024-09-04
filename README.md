@@ -34,3 +34,21 @@ make requirements
 ```
 
 Pour plus d'information rendez-vous sur le readme de `api-interface`
+
+## Lancer le projet
+
+### Lancer le projet dans un container Docker
+
+```
+cd api-interface
+make build
+make up
+marke start
+```
+
+### Lancer le projet en local
+
+```
+cd api-interface
+go run app.go
+```

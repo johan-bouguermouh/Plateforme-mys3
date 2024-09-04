@@ -24,17 +24,17 @@ RUN mkdir ./static
 COPY ./static ./static
 
 # `boilerplate` should be replaced here as well
-COPY --from=build /go/src/api-interface/app /usr/local/bin/app
+COPY --from=build /go/src/api-interface/app .
 COPY --from=build /go/src/api-interface/.env .
 
 # Add packages
 RUN apk -U upgrade \
     && apk add --no-cache dumb-init ca-certificates \
-    && chmod +x /usr/local/bin/app
+    && chmod +x /app/app
 
 # Exposes port 3000 because our program listens on that port
 EXPOSE 3000
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/local/bin/app"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/app/app"]
 
 # Run the application
