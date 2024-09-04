@@ -6,5 +6,5 @@ import (
 
 func Router(route fiber.Router) {
     /** Route for Minio Upload */
-    route.Post("/upload", controllers.UploadFile)
+    //route.Post("/upload", controllers.UploadFile)
 }
