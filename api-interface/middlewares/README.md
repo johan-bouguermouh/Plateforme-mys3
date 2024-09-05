@@ -39,7 +39,7 @@ aws-us-gov (AWS GovCloud).
 Les objets dans S3 peuvent être nommés de manière plus flexible, mais certaines pratiques sont recommandées :
 
 Longueur : Entre 1 et 1024 caractères.
-Encodage : UTF-8.
+Encodage : UTF-8.   
 Caractères autorisés : Lettres minuscules et majuscules, chiffres. Tirets (-), underscores (_), points (.).
 Caractères spéciaux : Les caractères spéciaux comme les espaces, accents, ou caractères spéciaux (ex : !, *, ', (, ), etc.) sont autorisés mais doivent être encodés en UTF-8 dans les URL.
 Conventions recommandées :
@@ -57,13 +57,13 @@ Taille maximale avec Multipart Upload : 5 To.
 Taille minimale d’une partie dans Multipart Upload : 5 Mo (sauf la dernière partie, qui peut être plus petite).
 
 
-4. Taille des Buckets
+## 4. Taille des Buckets
 
 Nombre maximal d'objets dans un bucket : Illimité.
 Pas de taille limite par défaut, mais des limites peuvent être imposées par l'utilisateur.
 
 
-5. Permissions et Access Control
+ ## 5. Permissions et Access Control
 
 AWS S3 propose deux mécanismes pour gérer les permissions sur les buckets et les objets :
 
@@ -77,7 +77,7 @@ Les politiques IAM permettent un contrôle plus fin et basé sur des rôles pour
 Elles peuvent être définies pour un bucket entier ou pour des objets spécifiques.
 
 
-6. Versioning
+## 6. Versioning
 
 AWS S3 permet d’activer le versioning sur les buckets, ce qui permet de conserver différentes versions d'un même objet.
 
@@ -85,13 +85,13 @@ Chaque fois qu’un objet est modifié, une nouvelle version de cet objet est cr
 Les versions précédentes sont conservées à moins d'être explicitement supprimées.
 
 
-7. Logging et Traçabilité
+## 7. Logging et Traçabilité
 
 Access Logging : AWS S3 permet de conserver un journal des requêtes effectuées sur un bucket. Ces logs incluent des informations sur les requêtes effectuées, l'heure, le type de requête, etc.
 Traçabilité : Intégration avec CloudTrail pour surveiller la sécurité et l'activité autour des buckets.
 
 
-8. Classes de Stockage
+## 8. Classes de Stockage
 
 AWS S3 propose plusieurs classes de stockage selon les besoins de performance et de coût :
 
@@ -102,13 +102,13 @@ S3 Glacier : Pour les archives long terme avec des temps de récupération plus 
 S3 Glacier Deep Archive : Solution de stockage à moindre coût pour les données à long terme.
 
 
-9. Consistance des Données
+## 9. Consistance des Données
 
 Consistance immédiate pour les nouveaux objets : Les objets ajoutés sont immédiatement accessibles.
 Consistance éventuelle pour les suppressions et modifications : Les objets supprimés ou modifiés peuvent encore être accessibles pendant un certain temps jusqu'à ce que la modification soit propagée.
 
 
-10. Gestion des Erreurs et Codes de Retour
+## 10. Gestion des Erreurs et Codes de Retour
 
 Les erreurs et codes de retour doivent être conformes aux standards HTTP d'AWS S3 :
 
@@ -120,7 +120,7 @@ Les erreurs et codes de retour doivent être conformes aux standards HTTP d'AWS 
 500 Internal Server Error : Erreur interne du serveur.
 
 
-11. Multipart Upload
+## 11. Multipart Upload
 
 Pour les gros fichiers, AWS S3 propose le multipart upload :
 
@@ -129,12 +129,12 @@ Nombre maximal de parties : 10 000.
 Assemblage : Les parties téléchargées séparément sont ensuite assemblées pour former un fichier complet.
 
 
-12. CORS (Cross-Origin Resource Sharing)
+## 12. CORS (Cross-Origin Resource Sharing)
 
 CORS permet aux applications web d’accéder aux objets S3 depuis un domaine différent. Des règles spécifiques doivent être définies pour autoriser ces requêtes inter-origines.
 
 
-13. Gestion du Chiffrement
+## 13. Gestion du Chiffrement
 
 Chiffrement des objets au repos :
 SSE-S3 : Chiffrement côté serveur avec des clés gérées par AWS.
@@ -144,19 +144,19 @@ Chiffrement des objets en transit :
 Utilisation du protocole HTTPS pour protéger les données lors des transferts vers et depuis S3.
 
 
-14. Limitation du Nombre d'Objets dans un Bucket
+## 14. Limitation du Nombre d'Objets dans un Bucket
 
 Bien qu'il n’y ait pas de limite théorique sur le nombre d'objets, un middleware peut être ajouté pour imposer une limite personnalisée (ex : 1 million d’objets).
 
 
-15. Gestion du Cycle de Vie des Objets
+## 15. Gestion du Cycle de Vie des Objets
 
 Définition de règles de cycle de vie pour les objets dans un bucket :
 Transition automatique des objets vers une classe de stockage plus économique (ex : Glacier) après une certaine période.
 Suppression automatique des objets après une certaine durée (ex : après 365 jours).
 
 
-16. Vérification des Extensions de Fichiers
+## 16. Vérification des Extensions de Fichiers
 
 Valider les extensions des fichiers lors de l’upload pour s'assurer qu'elles sont autorisées (par exemple, permettre uniquement .jpg, .png, .txt).
 Rejeter les fichiers avec des extensions non autorisées.
