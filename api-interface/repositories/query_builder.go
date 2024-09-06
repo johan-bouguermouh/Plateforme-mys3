@@ -13,6 +13,10 @@ type QueryBuilder[T entity.Entity] struct {
     bucketName string
 }
 
+func (qb *QueryBuilder[T]) GetEntity() T {
+    return qb.entity
+}
+
 func NewQueryBuilder[T entity.Entity](entity T, db *bbolt.DB, bucketName string) (*QueryBuilder[T], error)  {
     // Vérifier et créer le bucket si nécessaire
     err := db.Update(func(tx *bbolt.Tx) error {

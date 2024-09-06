@@ -1,11 +1,16 @@
 package main
 
 import (
+	"api-interface/handlers"
+	"api-interface/models"
+	"api-interface/routes"
+
 	"flag"
 	"log"
 
-	"api-interface/models"
-
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
 	"go.etcd.io/bbolt"
 )
@@ -24,57 +29,41 @@ func init() {
 	}
 }
 
-// func main() {
-// 	// Parse command-line flags
-// 	flag.Parse()
-
-// 	// Connected with database
-// 	database.Connect()
-
-// 	// Create fiber app
-// 	app := fiber.New(fiber.Config{
-// 		Prefork: *prod, // go run app.go -prod
-// 	})
-
-// 	// Middleware
-// 	app.Use(recover.New())
-// 	app.Use(logger.New())
-
-// 	// Create a /api/v1 endpoint
-// 	v1 := app.Group("/api/v1")
-
-// 	routes.Router(v1)
-
-// 	// Bind handlers
-// 	v1.Get("/users", handlers.UserList)
-// 	v1.Post("/users", handlers.UserCreate)
-
-// 	// Setup static files
-// 	app.Static("/", "./static/public")
-
-// 	// Handle not founds
-// 	app.Use(handlers.NotFound)
-
-// 	// Listen on port 3000
-// 	log.Fatal(app.Listen(*port)) // go run app.go -port=:3000
-// }
-
 func main() {
-	    // Ouvrir la base de données BoltDB
-		db, err := bbolt.Open("my.db", 0600, nil)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer db.Close()
-	
-		// Initialiser les repositories
-		models.InitRepositories(db)
-	
-		//Optionnel : Utiliser les repositories pour vérifier que tout fonctionne
-		repo := models.GetRepository("Bucket")
-		if repo != nil {
-			log.Println("Repository for Bucket initialized successfully")
-		} else {
-			log.Println("Failed to initialize repository for Bucket")
-		}
+	// Parse command-line flags
+	flag.Parse()
+
+	// Connected with database
+	db, err := bbolt.Open("my.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
 	}
+	defer db.Close()
+
+	// Initialize repositories
+	models.InitRepositories(db)
+	
+
+	// Create fiber app
+	app := fiber.New(fiber.Config{
+		Prefork: *prod, // go run app.go -prod
+	})
+
+	// Middleware
+	app.Use(recover.New())
+	app.Use(logger.New())
+
+	// Create a /api/v1 endpoint
+	v1 := app.Group("/api/v1")
+
+	routes.Router(v1)
+
+	// Setup static files
+	app.Static("/", "./static/public")
+
+	// Handle not founds
+	app.Use(handlers.NotFound)
+
+	// Listen on port 3000
+	log.Fatal(app.Listen(*port)) // go run app.go -port=:3000
+}

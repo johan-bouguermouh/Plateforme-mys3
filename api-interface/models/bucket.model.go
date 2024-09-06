@@ -21,7 +21,7 @@ func UseBucketModel() (*BucketModel, error) {
     }, nil
 }
 
-func (bm *BucketModel) Save(bucket *entity.Bucket) error {
+func (bm *BucketModel) Insert(bucket *entity.Bucket) error {
 	return bm.bucketRepository.Insert(bucket)
 }
 

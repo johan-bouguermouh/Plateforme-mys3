@@ -13,23 +13,39 @@ var (
     repositories = make(map[string]interface{})
 )
 
-
 func InitRepositories(db *bbolt.DB) {
     fmt.Println(Yellow + "=== Initialisation des Repositories ===" + Reset)
 
     // Obtenir tous les types enregistrés dans le registre global
     for typeName, structType := range entity.GetAllEntityTypes() {
 
-		if AssureEntityCompliance(typeName, structType) {
+        if AssureEntityCompliance(typeName, structType) {
             bucketName := structType.Name() + "s"
             // fmt.Printf("Nom du bucket : %s\n", bucketName)
-			entityInstance, err := entity.NewEntityInstance(typeName)
+            entityInstance, err := entity.NewEntityInstance(typeName)
             if err != nil {
                 fmt.Printf("%sErreur lors de la création de l'instance de l'entité %s : %s%s\n", Red, typeName, err, Reset)
                 continue
             }
 
-            queryBuilder, err := repository.NewQueryBuilder(entityInstance, db, bucketName)
+            // Utiliser un switch pour gérer les types d'entités spécifiques
+            var queryBuilder interface{}
+            switch e := entityInstance.(type) {
+            case *entity.Bucket:
+                // on retourn e est on l'exprime en tant que *entity.Bucket
+                fmt.Println("Traitement de l'entité reconnue comme Bucket :", e)
+                queryBuilder, err = repository.NewQueryBuilder[*entity.Bucket](entityInstance.(*entity.Bucket), db, bucketName)
+
+            case *entity.BucketObject:
+                fmt.Println("Traitement de l'entité comme BucketObject :", e)
+                queryBuilder, err = repository.NewQueryBuilder[*entity.BucketObject](entityInstance.(*entity.BucketObject), db, bucketName)
+            case *entity.Owner:
+                fmt.Println("Traitement de l'entité comme Owner:", e)
+                queryBuilder, err = repository.NewQueryBuilder[*entity.Owner](entityInstance.(*entity.Owner), db, bucketName)
+            default:
+                fmt.Printf("%sType d'entité non supporté : %s%s\n", Red, typeName, Reset)
+                continue
+            }
             if err != nil {
                 fmt.Printf("%sErreur lors de la création du QueryBuilder pour l'entité %s : %s%s\n", Red, typeName, err, Reset)
                 continue

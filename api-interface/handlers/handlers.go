@@ -1,19 +1,18 @@
 package handlers
 
 import (
-	"api-interface/database"
-
 	"github.com/gofiber/fiber/v2"
 )
 
 // UserList returns a list of users
 func UserList(c *fiber.Ctx) error {
-	users := database.Get()
+	// users := database.Get()
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"users":   users,
-	})
+	// return c.JSON(fiber.Map{
+	// 	"success": true,
+	// 	"users":   users,
+	// })
+	return nil
 }
 
 // UserCreate registers a user
