@@ -20,6 +20,7 @@ type Validator struct {
 	namePattern     *regexp.Regexp
 }
 
+// NewFileNameValidator crée une nouvelle instance de Validator avec des règles prédéfinies.
 func NewFileNameValidator() *Validator {
 	return &Validator{
 

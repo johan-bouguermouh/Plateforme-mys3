@@ -19,7 +19,7 @@ type Validator struct {
 	namePattern     *regexp.Regexp
 }
 
-// NewValidator crée une nouvelle instance de Validator avec des règles prédéfinies.
+// NewBucketNameValidator crée une nouvelle instance de Validator avec des règles prédéfinies.
 func NewBucketNameValidator() *Validator {
 	return &Validator{
 		// Initialisation des patterns de regex pour la validation des noms de bucket.
