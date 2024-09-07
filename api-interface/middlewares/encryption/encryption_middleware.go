@@ -1,82 +1,65 @@
 package middlewares
 
 import (
+	"api-interface/handlers/errors" // Mettez ici le chemin correct vers votre package d'erreurs
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"fmt"
+	"net/http"
 )
 
+// Exemple de clé secrète. Assurez-vous de gérer les clés secrètes de manière sécurisée.
 var (
-	// We're using a 32 byte long secret key.
-	// This is probably something you generate first
-	// then put into and environment variable.
 	secretKey string = "N1PCdw3M2B1TfJhoaY2mL736p2vCUc47"
 )
 
-func encrypt(plaintext string) string {
-	aes, err := aes.NewCipher([]byte(secretKey))
+// encrypt chiffre le texte et retourne le texte chiffré ou appelle HandleError en cas d'erreur.
+func encrypt(w http.ResponseWriter, plaintext string) (string, bool) {
+	aesBlock, err := aes.NewCipher([]byte(secretKey))
 	if err != nil {
-		panic(err)
+		errors.HandleError(w, errors.ErrInternalServerError, "Encryption failed: "+err.Error())
+		return "", false
 	}
 
-	gcm, err := cipher.NewGCM(aes)
+	gcm, err := cipher.NewGCM(aesBlock)
 	if err != nil {
-		panic(err)
+		errors.HandleError(w, errors.ErrInternalServerError, "Encryption failed: "+err.Error())
+		return "", false
 	}
 
-	// We need a 12-byte nonce for GCM (modifiable if you use cipher.NewGCMWithNonceSize())
-	// A nonce should always be randomly generated for every encryption.
 	nonce := make([]byte, gcm.NonceSize())
 	_, err = rand.Read(nonce)
 	if err != nil {
-		panic(err)
+		errors.HandleError(w, errors.ErrInternalServerError, "Encryption failed: "+err.Error())
+		return "", false
 	}
 
-	// ciphertext here is actually nonce+ciphertext
-	// So that when we decrypt, just knowing the nonce size
-	// is enough to separate it from the ciphertext.
 	ciphertext := gcm.Seal(nonce, nonce, []byte(plaintext), nil)
-
-	return string(ciphertext)
+	return string(ciphertext), true
 }
 
-func decrypt(ciphertext string) string {
-	aes, err := aes.NewCipher([]byte(secretKey))
+// decrypt déchiffre le texte et retourne le texte déchiffré ou appelle HandleError en cas d'erreur.
+func decrypt(w http.ResponseWriter, ciphertext string) (string, bool) {
+	aesBlock, err := aes.NewCipher([]byte(secretKey))
 	if err != nil {
-		panic(err)
+		errors.HandleError(w, errors.ErrInternalServerError, "Decryption failed: "+err.Error())
+		return "", false
 	}
 
-	gcm, err := cipher.NewGCM(aes)
+	gcm, err := cipher.NewGCM(aesBlock)
 	if err != nil {
-		panic(err)
+		errors.HandleError(w, errors.ErrInternalServerError, "Decryption failed: "+err.Error())
+		return "", false
 	}
 
-	// Since we know the ciphertext is actually nonce+ciphertext
-	// And len(nonce) == NonceSize(). We can separate the two.
 	nonceSize := gcm.NonceSize()
 	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
 
 	plaintext, err := gcm.Open(nil, []byte(nonce), []byte(ciphertext), nil)
 	if err != nil {
-		panic(err)
+		errors.HandleError(w, errors.ErrInternalServerError, "Decryption failed: "+err.Error())
+		return "", false
 	}
 
-	return string(plaintext)
-}
-
-func main() {
-	// This will successfully encrypt & decrypt
-	ciphertext1 := encrypt("This is some sensitive information")
-	fmt.Printf("Encrypted ciphertext 1: %x \n", ciphertext1)
-
-	plaintext1 := decrypt(ciphertext1)
-	fmt.Printf("Decrypted plaintext 1: %s \n", plaintext1)
-
-	// This will successfully encrypt & decrypt as well.
-	ciphertext2 := encrypt("Hello")
-	fmt.Printf("Encrypted ciphertext 2: %x \n", ciphertext2)
-
-	plaintext2 := decrypt(ciphertext2)
-	fmt.Printf("Decrypted plaintext 2: %s \n", plaintext2)
+	return string(plaintext), true
 }

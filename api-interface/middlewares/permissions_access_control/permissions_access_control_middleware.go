@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"api-interface/handlers/errors"
 	"log"
 	"net/http"
 	"strings"
@@ -25,7 +26,7 @@ func PermissionMiddleware(next http.Handler) http.Handler {
 		user := r.Header.Get("X-User")
 		if user == "" {
 			log.Printf("Access denied: Missing user header\n")
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			errors.HandleError(w, errors.ErrForbidden, "Missing user header") // Message personnalisé
 			return
 		}
 
@@ -33,22 +34,22 @@ func PermissionMiddleware(next http.Handler) http.Handler {
 		parts := strings.SplitN(path, "/", 3)
 		if len(parts) < 2 {
 			log.Printf("Access denied: Invalid path format %s\n", path)
-			http.Error(w, "File not found", http.StatusNotFound)
+			errors.HandleError(w, errors.ErrNotFound, "Invalid path format") // Message personnalisé
 			return
 		}
-		
-		// Si le bucket n'existe pas dans l'ACL, le chemin est considéré comme invalide
+
 		bucket := parts[1]
 		if _, exists := acl[bucket]; !exists {
+			// Si le bucket n'existe pas dans l'ACL, le chemin est considéré comme invalide
 			log.Printf("Access denied: Bucket %s not found\n", bucket)
-			http.Error(w, "File not found", http.StatusNotFound)
+			errors.HandleError(w, errors.ErrNotFound) // Utilise le message par défaut
 			return
 		}
 
 		requiredPermission, userExists := acl[bucket][user]
 		if !userExists {
 			log.Printf("Access denied: User %s does not have access to bucket %s\n", user, bucket)
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			errors.HandleError(w, errors.ErrForbidden, "User does not have access to the bucket") // Message personnalisé
 			return
 		}
 
@@ -66,7 +67,7 @@ func PermissionMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader != "Bearer mysecret" {
 			log.Printf("Access denied to %s for user %s: Unauthorized\n", path, user)
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			errors.HandleError(w, errors.New(http.StatusUnauthorized, "Invalid authorization token")) // Utilise 401 Unauthorized
 			return
 		}
 

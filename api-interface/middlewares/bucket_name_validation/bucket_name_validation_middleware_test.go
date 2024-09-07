@@ -40,11 +40,6 @@ func TestValidateBucketPatternName(t *testing.T) {
 	for _, test := range tests {
 		result := validator.Validate(test.name)
 
-		// Test réellement raté, qui ne passe pas. Bad status
-		// if !reflect.DeepEqual(result, test.expected) {
-		// 	t.Errorf("For bucket name %q, expected errors %v, got %v", test.name, test.expected, result)
-		// }
-
 		// Affichage de log sans usage d'erreur et stopage de test
 		// Affichage des résultats pour tous les cas
 		if len(result) == 1 && result[0] == "Nom de bucket valide." {

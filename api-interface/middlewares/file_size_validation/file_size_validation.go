@@ -1,28 +1,24 @@
 package middlewares
 
 import (
-	"errors"
+	"api-interface/handlers/errors"
 	"net/http"
 	"strconv"
 )
 
+// Const de taille de fichiers.
 const (
 	// Taille maximale des fichiers upload direct -> 5 Go.
 	MaxDirectUploadSize = 5 * 1024 * 1024 * 1024
+
 	// Taille maximale avec Multipart Upload : 5 To.
 	MaxMultipartUploadSize = 5 * 1024 * 1024 * 1024 * 1024
+
 	// Taille minimale pour les fichiers en Multipart Upload ( sauf dernier qui peut-être plus petit)
 	MinPartSize = 5 * 1024 * 1024 // 5 Mo
 )
 
-// Error messages
-var (
-	ErrFileTooLarge      = errors.New("le fichier dépasse la taille maximale autorisée pour un upload direct (5 Go)")
-	ErrMultipartTooLarge = errors.New("la taille cumulée des parties dépasse la limite de 5 To pour un Multipart Upload")
-	ErrPartTooSmall      = errors.New("chaque partie de l'upload Multipart doit faire au moins 5 Mo, sauf la dernière partie")
-)
-
-// ValidateDirectUpload vérifie la taille du fichier pour un upload en "direct" 
+// ValidateDirectUpload vérifie la taille du fichier pour un upload en "direct".
 func ValidateDirectUpload(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, MaxDirectUploadSize)
@@ -31,12 +27,12 @@ func ValidateDirectUpload(next http.Handler) http.Handler {
 		if contentLengthStr != "" {
 			contentLengthStr, err := strconv.ParseInt(contentLengthStr, 10, 64)
 			if err != nil {
-				http.Error(w, "Taille du fichier invalide", http.StatusBadRequest)
+				errors.HandleError(w, errors.ErrBadRequest, "Taille du fichier invalide")
 				return
 			}
 
 			if contentLengthStr > MaxDirectUploadSize {
-				http.Error(w, ErrFileTooLarge.Error(), http.StatusRequestEntityTooLarge)
+				errors.HandleError(w, errors.ErrRequestEntityTooLarge, "Le fichier dépasse la taille maximale autorisée pour un upload direct (5 Go)")
 				return
 			}
 		}
@@ -44,9 +40,10 @@ func ValidateDirectUpload(next http.Handler) http.Handler {
 	})
 }
 
-// ValidateMultipartUpload vérifie la taille d'un fichier upload en multipart 
+// ValidateMultipartUpload vérifie la taille d'un fichier upload en multipart.
 func ValidateMultipartUpload(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 		// Simuler l'extraction des tailles des parties
 		partSizes := extractPartSizes(r) // Cette fonction devrait être implémentée pour extraire les tailles des parties d'un upload multipart.
 
@@ -57,7 +54,7 @@ func ValidateMultipartUpload(next http.Handler) http.Handler {
 
 			// Vérifier la taille de chaque partie du fichier.
 			if i < len(partSizes)-1 && partSize < MinPartSize {
-				http.Error(w, ErrPartTooSmall.Error(), http.StatusRequestEntityTooLarge)
+				errors.HandleError(w, errors.ErrRequestEntityTooLarge, "Chaque partie de l'upload Multipart doit faire au moins 5 Mo, sauf la dernière partie")
 				return
 			}
 
@@ -65,7 +62,7 @@ func ValidateMultipartUpload(next http.Handler) http.Handler {
 
 		// Vérifiez que la taille du fichier ne dépasse pas 5 To
 		if totalSize > MaxMultipartUploadSize {
-			http.Error(w, ErrMultipartTooLarge.Error(), http.StatusRequestEntityTooLarge)
+			errors.HandleError(w, errors.ErrRequestEntityTooLarge, "La taille cumulée des parties dépasse la limite de 5 To pour un Multipart Upload")
 			return
 		}
 

@@ -9,7 +9,6 @@ import (
 )
 
 // Test du middleware ValidateDirectUpload
-
 func TestValidateDirectUpload_Success(t *testing.T) {
 	// Création d'un fichier de 4 Go, donc valide pour l'upload direct (moins de 5 Go).
 	fileSize := 4 * 1024 * 1024 * 1024
@@ -24,11 +23,14 @@ func TestValidateDirectUpload_Success(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	// Exécution de la requête
 	handler.ServeHTTP(rr, req)
 
 	// Vérification du code de statut de la réponse
 	if rr.Code != http.StatusOK {
 		t.Errorf("Code de statut attendu %v, mais obtenu %v", http.StatusOK, rr.Code)
+	} else {
+		t.Logf("TestValidateDirectUpload_Success : Code de statut obtenu %v", rr.Code)
 	}
 }
 
@@ -46,17 +48,23 @@ func TestValidateDirectUpload_FileTooLarge(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	// Exécution de la requête
 	handler.ServeHTTP(rr, req)
 
 	// Vérification que l'erreur est bien renvoyée
 	if rr.Code != http.StatusRequestEntityTooLarge {
 		t.Errorf("Code de statut attendu %v, mais obtenu %v", http.StatusRequestEntityTooLarge, rr.Code)
+	} else {
+		t.Logf("TestValidateDirectUpload_FileTooLarge : Code de statut obtenu %v", rr.Code)
 	}
 
-	expectedErrorMessage := ErrFileTooLarge.Error()
+	// Vérification du message d'erreur personnalisé
+	expectedErrorMessage := `{"code":413,"message":"Le fichier dépasse la taille maximale autorisée pour un upload direct (5 Go)"}`
 	receivedErrorMessage := strings.TrimSpace(rr.Body.String())
 	if receivedErrorMessage != expectedErrorMessage {
 		t.Errorf("Message d'erreur attendu %v, mais obtenu %v", expectedErrorMessage, receivedErrorMessage)
+	} else {
+		t.Logf("TestValidateDirectUpload_FileTooLarge : Message d'erreur obtenu %v", receivedErrorMessage)
 	}
 }
 
@@ -73,11 +81,23 @@ func TestValidateDirectUpload_InvalidContentLength(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	// Exécution de la requête
 	handler.ServeHTTP(rr, req)
 
 	// Vérification que l'erreur est bien renvoyée
 	if rr.Code != http.StatusBadRequest {
 		t.Errorf("Code de statut attendu %v, mais obtenu %v", http.StatusBadRequest, rr.Code)
+	} else {
+		t.Logf("TestValidateDirectUpload_InvalidContentLength : Code de statut obtenu %v", rr.Code)
+	}
+
+	// Vérification du message d'erreur personnalisé
+	expectedErrorMessage := `{"code":400,"message":"Taille du fichier invalide"}`
+	receivedErrorMessage := strings.TrimSpace(rr.Body.String())
+	if receivedErrorMessage != expectedErrorMessage {
+		t.Errorf("Message d'erreur attendu %v, mais obtenu %v", expectedErrorMessage, receivedErrorMessage)
+	} else {
+		t.Logf("TestValidateDirectUpload_InvalidContentLength : Message d'erreur obtenu %v", receivedErrorMessage)
 	}
 }
 
@@ -95,11 +115,14 @@ func TestValidateMultipartUpload_Success(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	// Exécution de la requête
 	handler.ServeHTTP(rr, req)
 
 	// Vérification du code de statut de la réponse
 	if rr.Code != http.StatusOK {
 		t.Errorf("Code de statut attendu %v, mais obtenu %v", http.StatusOK, rr.Code)
+	} else {
+		t.Logf("TestValidateMultipartUpload_Success : Code de statut obtenu %v", rr.Code)
 	}
 }
 
@@ -119,17 +142,23 @@ func TestValidateMultipartUpload_PartTooSmall(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	// Exécution de la requête
 	handler.ServeHTTP(rr, req)
 
 	// Vérification que l'erreur est bien renvoyée
 	if rr.Code != http.StatusRequestEntityTooLarge {
 		t.Errorf("Code de statut attendu %v, mais obtenu %v", http.StatusRequestEntityTooLarge, rr.Code)
+	} else {
+		t.Logf("TestValidateMultipartUpload_PartTooSmall : Code de statut obtenu %v", rr.Code)
 	}
 
-	expectedErrorMessage := ErrPartTooSmall.Error()
+	// Vérification du message d'erreur personnalisé
+	expectedErrorMessage := `{"code":413,"message":"Chaque partie de l'upload Multipart doit faire au moins 5 Mo, sauf la dernière partie"}`
 	receivedErrorMessage := strings.TrimSpace(rr.Body.String())
 	if receivedErrorMessage != expectedErrorMessage {
 		t.Errorf("Message d'erreur attendu %v, mais obtenu %v", expectedErrorMessage, receivedErrorMessage)
+	} else {
+		t.Logf("TestValidateMultipartUpload_PartTooSmall : Message d'erreur obtenu %v", receivedErrorMessage)
 	}
 }
 
@@ -149,16 +178,22 @@ func TestValidateMultipartUpload_TotalSizeTooLarge(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	// Exécution de la requête
 	handler.ServeHTTP(rr, req)
 
 	// Vérification que l'erreur est bien renvoyée
 	if rr.Code != http.StatusRequestEntityTooLarge {
 		t.Errorf("Code de statut attendu %v, mais obtenu %v", http.StatusRequestEntityTooLarge, rr.Code)
+	} else {
+		t.Logf("TestValidateMultipartUpload_TotalSizeTooLarge : Code de statut obtenu %v", rr.Code)
 	}
 
-	expectedErrorMessage := ErrMultipartTooLarge.Error()
+	// Vérification du message d'erreur personnalisé
+	expectedErrorMessage := `{"code":413,"message":"La taille cumulée des parties dépasse la limite de 5 To pour un Multipart Upload"}`
 	receivedErrorMessage := strings.TrimSpace(rr.Body.String())
 	if receivedErrorMessage != expectedErrorMessage {
 		t.Errorf("Message d'erreur attendu %v, mais obtenu %v", expectedErrorMessage, receivedErrorMessage)
+	} else {
+		t.Logf("TestValidateMultipartUpload_TotalSizeTooLarge : Message d'erreur obtenu %v", receivedErrorMessage)
 	}
 }
