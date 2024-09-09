@@ -3,6 +3,7 @@ package controllers
 import (
 	entity "api-interface/entities"
 	"api-interface/models"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,32 +25,51 @@ func NewBucketController() (*BucketController, error) {
     }, nil
 }
 
+// Field names should start with an uppercase letter
+type Person struct {
+    Name string `json:"name" xml:"name" form:"name"`
+    Pass string `json:"pass" xml:"pass" form:"pass"`
+}
 /** InsertBucket permet d'insérer un Bucket dans la base de données */
 func (b *BucketController) InsertBucket(c *fiber.Ctx) error {
-    println("InsertBucket", c)
+    // Log the raw body
+    bucket := new(entity.Bucket)
 
     // Extraire et valider les données du formulaire
-    var bucket entity.Bucket
-    if err := c.BodyParser(&bucket); err != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "error": "cannot parse JSON",
+  
+    if err := c.BodyParser(bucket); err != nil {
+        fmt.Println("Error parsing JSON:", err)
+        return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+            "errors": err.Error(),
         })
     }
 
-    // Valider les champs obligatoires
+    //Valider les champs obligatoires
     if bucket.Name == "" || bucket.CreationDate == "" {
         return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
             "error": "missing required bucket fields",
         })
     }
 
-    // Insérer le bucket dans la base de données
-    err := b.bucketService.Insert(&bucket)
+    //Insérer le bucket dans la base de données
+    err := b.bucketService.Insert(bucket)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
             "error": err.Error(),
         })
     }
 
-    return c.JSON(bucket)
+    return c.JSON("helloWorld")
+}
+
+//* getAllBuckets permet de récupérer tous les Buckets de la base de données
+func (b *BucketController) GetAllBuckets(c *fiber.Ctx) error {
+    buckets, err := b.bucketService.GetAllBuckets()
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+            "error": err.Error(),
+        })
+    }
+
+    return c.JSON(buckets)
 }

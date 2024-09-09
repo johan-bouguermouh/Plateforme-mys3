@@ -25,3 +25,20 @@ func (bm *BucketModel) Insert(bucket *entity.Bucket) error {
 	return bm.bucketRepository.Insert(bucket)
 }
 
+func (bm *BucketModel) GetAllBuckets() ([]entity.Bucket, error) {
+    buckets, err := bm.bucketRepository.Find(func(b *entity.Bucket) bool {
+        // Appliquer un filtre si nécessaire, par exemple, retourner true pour inclure tous les buckets
+        return true
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    // Convertir []*entity.Bucket en []entity.Bucket
+    var result []entity.Bucket
+    for _, bucket := range buckets {
+        result = append(result, *bucket)
+    }
+    return result, nil
+}
+

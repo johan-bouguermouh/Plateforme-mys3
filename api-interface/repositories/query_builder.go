@@ -3,6 +3,7 @@ package repository
 import (
 	entity "api-interface/entities"
 	"fmt"
+	"reflect"
 
 	"go.etcd.io/bbolt"
 )
@@ -82,8 +83,7 @@ func (qb *QueryBuilder[T]) Get(key string, entity T) error {
         if data == nil {
             return fmt.Errorf("entity not found")
         }
-        err := entity.Deserialize(data)
-        if err != nil {
+        if err := entity.Deserialize(data); err != nil {
             return err
         }
         return nil
@@ -94,13 +94,13 @@ func (qb *QueryBuilder[T]) Get(key string, entity T) error {
     * @param entity T, l'entité à mettre à jour
     * @return error, une erreur si l'opération a échoué
 */
-func (qb *QueryBuilder[T]) GetAll(filter func(T) bool) ([]T, error) {
+func (qb *QueryBuilder[T]) Find(filter func(T) bool) ([]T, error) {
     var entities []T
     err := qb.db.View(func(tx *bbolt.Tx) error {
         bucket := tx.Bucket([]byte(qb.bucketName))
         return bucket.ForEach(func(k, v []byte) error {
-            var entity T
-            if err := entity.Deserialize(v); err != nil {
+            entity := reflect.New(reflect.TypeOf(qb.entity).Elem()).Interface().(T)
+           if err := entity.Deserialize(v); err != nil {
                 return err
             }
             if filter(entity) {
