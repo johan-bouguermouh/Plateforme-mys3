@@ -8,11 +8,11 @@ import (
 )
 
 // Initialisation des types d'entités
-func init() {
-    RegisterEntityType("Bucket", reflect.TypeOf(Bucket{}))
-    RegisterEntityType("BucketObject", reflect.TypeOf(BucketObject{}))
-    RegisterEntityType("Owner", reflect.TypeOf(Owner{}))
-}
+// func init() {
+//     RegisterEntityType("Bucket", reflect.TypeOf(Bucket{}))
+//     RegisterEntityType("BucketObject", reflect.TypeOf(BucketObject{}))
+//     RegisterEntityType("Owner", reflect.TypeOf(Owner{}))
+// }
 
 // EntityRegistry est une structure qui contient une carte des types d'entités enregistrés.
 type EntityRegistry struct {
@@ -54,6 +54,8 @@ var globalRegistry = NewEntityRegistry()
 
 // RegisterEntityType enregistre un type d'entité dans la carte globale.
 func RegisterEntityType(name string, t reflect.Type) {
+    fmt.Println("t type in T RegisterEntityType", reflect.TypeOf(t))
+    fmt.Println("Type needed to control type",reflect.TypeOf(Bucket{}))
     globalRegistry.Register(name, t)
 }
 
