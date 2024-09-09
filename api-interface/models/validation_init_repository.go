@@ -19,7 +19,7 @@ const (
     Grey   = "\033[90m"
 )
 
-/** Function retournant les tests d'application d'un TypeEntity avant l'intégration dans la base de données 
+/** Tests d'application d'un TypeEntity avant l'intégration d'un Repository
     * @param typeName string
     * @param structType reflect.Type
     * @return bool

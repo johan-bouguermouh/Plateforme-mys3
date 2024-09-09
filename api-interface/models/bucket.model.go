@@ -11,7 +11,7 @@ type BucketModel struct {
 
 // NewBucketModel initialise un BucketModel avec le repository approprié
 func UseBucketModel() (*BucketModel, error) {
-    queryBuilder, err := GetRepository[*entity.Bucket]("Bucket")
+    queryBuilder, err := UseRepository[*entity.Bucket]("Bucket")
     if err != nil {
         return nil, err
     }

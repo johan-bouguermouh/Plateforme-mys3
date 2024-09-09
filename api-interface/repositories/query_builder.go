@@ -7,16 +7,23 @@ import (
 	"go.etcd.io/bbolt"
 )
 
+// QueryBuilder est une structure générique qui implémente les opérations CRUD pour une entité donnée. Cette Factory exploite les entité implémentant l'interface Entity pour effectuer des opérations de base de données.
 type QueryBuilder[T entity.Entity] struct {
     entity     T
     db         *bbolt.DB
     bucketName string
 }
 
+/** Retourne l'entité associée au QueryBuilder
+    * @return T, l'entité associée au QueryBuilder
+*/
 func (qb *QueryBuilder[T]) GetEntity() T {
     return qb.entity
 }
 
+/** Crée une nouvelle instance de QueryBuilder pour une entité donnée
+    * @return string, le nom du bucket associé au QueryBuilder
+*/
 func NewQueryBuilder[T entity.Entity](entity T, db *bbolt.DB, bucketName string) (*QueryBuilder[T], error)  {
     // Vérifier et créer le bucket si nécessaire
     err := db.Update(func(tx *bbolt.Tx) error {
@@ -32,7 +39,9 @@ func NewQueryBuilder[T entity.Entity](entity T, db *bbolt.DB, bucketName string)
     return &QueryBuilder[T]{entity: entity, db: db, bucketName: bucketName}, nil
 }
 
-// Méthode privée pour accéder au bucket
+/** Provate : Retourne le bucket associé au QueryBuilder
+    * @return *bbolt.Bucket, le bucket associé au QueryBuilder
+*/
 func (qb *QueryBuilder[T]) getBucket(tx *bbolt.Tx) (*bbolt.Bucket, error) {
     bucket := tx.Bucket([]byte(qb.bucketName))
     if bucket == nil {
@@ -41,6 +50,10 @@ func (qb *QueryBuilder[T]) getBucket(tx *bbolt.Tx) (*bbolt.Bucket, error) {
     return bucket, nil
 }
 
+/** Insère une entité dans la base de données
+    * @param entity T, l'entité à insérer
+    * @return error, une erreur si l'opération a échoué
+*/
 func (qb *QueryBuilder[T]) Insert(entity T) error {
     return qb.db.Update(func(tx *bbolt.Tx) error {
         bucket, err := qb.getBucket(tx)
@@ -55,6 +68,10 @@ func (qb *QueryBuilder[T]) Insert(entity T) error {
     })
 }
 
+/** Met à jour une entité dans la base de données
+    * @param entity T, l'entité à mettre à jour
+    * @return error, une erreur si l'opération a échoué
+*/
 func (qb *QueryBuilder[T]) Get(key string, entity T) error {
     return qb.db.View(func(tx *bbolt.Tx) error {
         bucket, errBucket := qb.getBucket(tx)
@@ -73,6 +90,10 @@ func (qb *QueryBuilder[T]) Get(key string, entity T) error {
     })
 }
 
+/** Met à jour une entité dans la base de données
+    * @param entity T, l'entité à mettre à jour
+    * @return error, une erreur si l'opération a échoué
+*/
 func (qb *QueryBuilder[T]) GetAll(filter func(T) bool) ([]T, error) {
     var entities []T
     err := qb.db.View(func(tx *bbolt.Tx) error {
