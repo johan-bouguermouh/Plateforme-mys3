@@ -1,10 +1,10 @@
+// main.go
 package main
 
 import (
 	"api-interface/database"
 	"api-interface/handlers"
 	"api-interface/routes"
-
 	"flag"
 	"log"
 
@@ -21,7 +21,6 @@ var (
 
 func init() {
 	// Charger les variables d'environnement
-	//envPath := filepath.Join("..", ".env")
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file")
@@ -32,7 +31,7 @@ func main() {
 	// Parse command-line flags
 	flag.Parse()
 
-	// Connected with database
+	// Connect with database
 	database.Connect()
 
 	// Create fiber app
@@ -44,14 +43,12 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 
-	// Create a /api/v1 endpoint
-	v1 := app.Group("/api/v1")
-
-	routes.Router(v1)
+	// Routes
+	routes.Router(app)
 
 	// Bind handlers
-	v1.Get("/users", handlers.UserList)
-	v1.Post("/users", handlers.UserCreate)
+	app.Get("/users", handlers.UserList)
+	app.Post("/users", handlers.UserCreate)
 
 	// Setup static files
 	app.Static("/", "./static/public")
@@ -59,6 +56,6 @@ func main() {
 	// Handle not founds
 	app.Use(handlers.NotFound)
 
-	// Listen on port 3000
-	log.Fatal(app.Listen(*port)) // go run app.go -port=:3000
+	// Listen on port
+	log.Fatal(app.Listen(":3000"))
 }
