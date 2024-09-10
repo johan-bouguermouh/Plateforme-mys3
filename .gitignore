@@ -1,2 +1,2 @@
 .env
-api-interface/my.db
+./api-interface/my.db
