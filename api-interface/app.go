@@ -2,6 +2,7 @@
 package main
 
 import (
+	"api-interface/database"
 	"api-interface/handlers"
 	"api-interface/models"
 	"api-interface/routes"
