@@ -1,5 +1,10 @@
 package database
 
+import (
+	"api-interface/models"
+	"fmt"
+)
+
 // import (
 // 	"api-interface/models"
 // 	"fmt"
@@ -17,21 +22,27 @@ package database
 // 	fmt.Println("Connected with Database")
 // }
 
-// func Insert(user *models.User) {
-// 	mu.Lock()
-// 	db = append(db, user)
-// 	mu.Unlock()
-// }
+//	func Insert(user *models.User) {
+//		mu.Lock()
+//		db = append(db, user)
+//		mu.Unlock()
+//	}
+func Insert(user *models.User) {
+	mu.Lock()
+	defer mu.Unlock()
+	db = append(db, user)
+	fmt.Printf("Utilisateur inséré : %+v\n", user)
+}
 
 // func Get() []*models.User {
 // 	return db
 // }
 
-// func GetByName( name string) *models.User {
-// 	for _, user := range db {
-// 		if user.Name == name {
-// 			return user
-// 		}
-// 	}
-// 	return nil
-// }
+func GetByName(name string) *models.User {
+	for _, user := range db {
+		if user.Name == name {
+			return user
+		}
+	}
+	return nil
+}
