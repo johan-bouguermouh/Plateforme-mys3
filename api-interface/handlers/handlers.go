@@ -10,12 +10,13 @@ import (
 
 // UserList returns a list of users
 func UserList(c *fiber.Ctx) error {
-	users := database.Get()
+	// users := database.Get()
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"users":   users,
-	})
+	// return c.JSON(fiber.Map{
+	// 	"success": true,
+	// 	"users":   users,
+	// })
+	return nil
 }
 
 // UserCreate registers a user
@@ -26,10 +27,12 @@ func UserCreate(c *fiber.Ctx) error {
 	}
 	database.Insert(user)
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"user":    user,
-	})
+	// return c.JSON(fiber.Map{
+	// 	"success": true,
+	// 	"user":    user,
+	// })
+	return nil
+
 }
 
 // NotFound returns custom 404 page

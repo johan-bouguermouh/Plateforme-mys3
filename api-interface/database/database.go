@@ -29,9 +29,9 @@ func Insert(user *models.User) {
 	fmt.Printf("Utilisateur inséré : %+v\n", user)
 }
 
-func Get() []*models.User {
-	return db
-}
+// func Get() []*models.User {
+// 	return db
+// }
 
 func GetByName(name string) *models.User {
 	for _, user := range db {

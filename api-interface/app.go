@@ -4,6 +4,7 @@ package main
 import (
 	"api-interface/database"
 	"api-interface/handlers"
+	"api-interface/models"
 	"api-interface/routes"
 	"flag"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
+	"go.etcd.io/bbolt"
 )
 
 var (
@@ -31,6 +33,16 @@ func main() {
 	// Parse command-line flags
 	flag.Parse()
 
+	// Connected with database
+	db, err := bbolt.Open("my.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Initialize repositories
+	models.InitRepositories(db)
+	
 	// Connect with database
 	database.Connect()
 
