@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"regexp"
+	"regexp" // Regular expression search : https://pkg.go.dev/regexp
 )
 
 // Taille min (3) - max (63) du nom du Bucket.

@@ -1,13 +1,13 @@
 package middlewares
 
 import (
-	"api-interface/handlers/errors"
-	"log"
-	"net/http"
-	"strings"
+	"api-interface/handlers/errors" // Import du handler d'erreur custom
+	"log" // Log (package simple de logging) : https://pkg.go.dev/log
+	"net/http" // HTTP client provider : https://pkg.go.dev/net/http
+	"strings" // Simple functions to manipulate UTF-8 encoded strings https://pkg.go.dev/strings
 )
 
-// Fausse base de données des permissions
+// Fausse données d'accès (fichier, ou BDD)
 var acl = map[string]map[string]string{
 	"bucket1": {
 		"user1": "public-read",
@@ -19,14 +19,18 @@ var acl = map[string]map[string]string{
 	},
 }
 
-// PermissionMiddleware contrôle d'accès sur les chemins de bucket / file
+// PermissionMiddleware 
+//  - next (http.Handler)
+// Contrôle d'accès sur les chemins de bucket / file
 func PermissionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// URL - Path 
 		path := r.URL.Path
+		// Utilisateur en header
 		user := r.Header.Get("X-User")
 		if user == "" {
 			log.Printf("Access denied: Missing user header\n")
-			errors.HandleError(w, errors.ErrForbidden, "Missing user header") // Message personnalisé
+			errors.HandleError(w, errors.ErrForbidden, "Missing user header")
 			return
 		}
 
@@ -34,10 +38,11 @@ func PermissionMiddleware(next http.Handler) http.Handler {
 		parts := strings.SplitN(path, "/", 3)
 		if len(parts) < 2 {
 			log.Printf("Access denied: Invalid path format %s\n", path)
-			errors.HandleError(w, errors.ErrNotFound, "Invalid path format") // Message personnalisé
+			errors.HandleError(w, errors.ErrNotFound, "Invalid path format")
 			return
 		}
 
+		// Check du bucket
 		bucket := parts[1]
 		if _, exists := acl[bucket]; !exists {
 			// Si le bucket n'existe pas dans l'ACL, le chemin est considéré comme invalide
@@ -46,10 +51,11 @@ func PermissionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// Check permission pour l'utilisateur et le bucket
 		requiredPermission, userExists := acl[bucket][user]
 		if !userExists {
 			log.Printf("Access denied: User %s does not have access to bucket %s\n", user, bucket)
-			errors.HandleError(w, errors.ErrForbidden, "User does not have access to the bucket") // Message personnalisé
+			errors.HandleError(w, errors.ErrForbidden, "User does not have access to the bucket")
 			return
 		}
 
@@ -63,11 +69,11 @@ func PermissionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Vérification des autorisations
+		// Vérification des autorisations en header
 		authHeader := r.Header.Get("Authorization")
 		if authHeader != "Bearer mysecret" {
 			log.Printf("Access denied to %s for user %s: Unauthorized\n", path, user)
-			errors.HandleError(w, errors.New(http.StatusUnauthorized, "Invalid authorization token")) // Utilise 401 Unauthorized
+			errors.HandleError(w, errors.New(http.StatusUnauthorized, "Invalid authorization token"))
 			return
 		}
 

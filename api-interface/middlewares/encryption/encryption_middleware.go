@@ -1,11 +1,11 @@
 package middlewares
 
 import (
-	"api-interface/handlers/errors" // Mettez ici le chemin correct vers votre package d'erreurs
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"net/http"
+	"api-interface/handlers/errors" // Import du handler d'erreur custom
+	"crypto/aes" // Package aes implements AES encryption : https://pkg.go.dev/crypto/aes
+	"crypto/cipher" // Implements standard block cipher modes : https://pkg.go.dev/crypto/cipher
+	"crypto/rand" // Rand implements a cryptographically secure random number generator : https://pkg.go.dev/crypto/rand
+	"net/http" // HTTP client provider : https://pkg.go.dev/net/http
 )
 
 // Exemple de clé secrète. Assurez-vous de gérer les clés secrètes de manière sécurisée.

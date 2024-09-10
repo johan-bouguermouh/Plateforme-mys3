@@ -1,11 +1,11 @@
 package middlewares
 
 import (
-	"api-interface/handlers/errors"
-	"net/http"
-	"regexp"
-	"strings"
-	"unicode/utf8"
+	"api-interface/handlers/errors" // Import du handler d'erreur custom
+	"net/http" // HTTP client provider : https://pkg.go.dev/net/http
+	"regexp" // Regular expression search : https://pkg.go.dev/regexp
+	"strings" // Simple functions to manipulate UTF-8 encoded strings https://pkg.go.dev/strings
+	"unicode/utf8" // Functions and constants to support text encoded in UTF-8 : https://pkg.go.dev/unicode/utf8
 )
 
 // Taille min (1) - max (1024) du nom du fichier.

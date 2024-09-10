@@ -1,17 +1,19 @@
 package errors
 
 import (
-	"encoding/json"
-	"net/http"
+	"encoding/json" // Librairie encoding JSON : https://pkg.go.dev/encoding/json 
+	"net/http" // HTTP client provider : https://pkg.go.dev/net/http
 )
 
-// Error représente une erreur personnalisée avec un code de statut HTTP.
+// Structure pour une erreur personnalisée : 
+// Code : Satus HTTP de l'erreur
+// Message : Message d'erreur, par défault il est définit ci-dessous selon le status mais peuvent-être personnalisé
 type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
-// New crée une nouvelle instance d'erreur avec un message par défaut.
+// Nouvelle instance d'erreur
 func New(code int, message string) *Error {
 	return &Error{
 		Code:    code,
@@ -20,13 +22,14 @@ func New(code int, message string) *Error {
 }
 
 // HandleError écrit la réponse d'erreur en format JSON dans le writer HTTP.
-// Permet de passer un message personnalisé qui remplace le message par défaut si spécifié.
 func HandleError(w http.ResponseWriter, err *Error, customMessage ...string) {
+
 	// Remplacer le message par défaut s'il y a un message personnalisé
 	if len(customMessage) > 0 {
 		err.Message = customMessage[0]
 	}
 
+	// Ajout du status d'erreur aux header de la réponse
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(err.Code)
 
@@ -34,7 +37,7 @@ func HandleError(w http.ResponseWriter, err *Error, customMessage ...string) {
 	json.NewEncoder(w).Encode(err)
 }
 
-// Exemples d'instances d'erreurs avec des messages par défaut
+// Exemples d'utilisation avec message par défault pour chaque status.
 var (
 	ErrBadRequest          = New(http.StatusBadRequest, "Bad Request")
 	ErrForbidden           = New(http.StatusForbidden, "Forbidden")

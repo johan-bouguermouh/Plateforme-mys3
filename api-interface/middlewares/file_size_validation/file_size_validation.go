@@ -1,9 +1,9 @@
 package middlewares
 
 import (
-	"api-interface/handlers/errors"
-	"net/http"
-	"strconv"
+	"api-interface/handlers/errors" // Import du handler d'erreur custom
+	"net/http" // HTTP client provider : https://pkg.go.dev/net/http
+	"strconv" // Conversions to and from string representations of basic data types : https://pkg.go.dev/strconv
 )
 
 // Const de taille de fichiers.
@@ -31,6 +31,7 @@ func ValidateDirectUpload(next http.Handler) http.Handler {
 				return
 			}
 
+			// Fichier trop gros
 			if contentLengthStr > MaxDirectUploadSize {
 				errors.HandleError(w, errors.ErrRequestEntityTooLarge, "Le fichier dépasse la taille maximale autorisée pour un upload direct (5 Go)")
 				return
@@ -44,8 +45,8 @@ func ValidateDirectUpload(next http.Handler) http.Handler {
 func ValidateMultipartUpload(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// Simuler l'extraction des tailles des parties
-		partSizes := extractPartSizes(r) // Cette fonction devrait être implémentée pour extraire les tailles des parties d'un upload multipart.
+		// Simuler l'extraction des tailles des parties du fichier
+		partSizes := extractPartSizes(r)
 
 		var totalSize int64
 
