@@ -72,3 +72,4 @@ func (v *Validator) Validate(name string) []string {
 
 	return errors
 }
+

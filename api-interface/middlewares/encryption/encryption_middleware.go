@@ -8,7 +8,7 @@ import (
 	"net/http" // HTTP client provider : https://pkg.go.dev/net/http
 )
 
-// Exemple de clé secrète. Assurez-vous de gérer les clés secrètes de manière sécurisée.
+// Exemple de clé secrète.
 var (
 	secretKey string = "N1PCdw3M2B1TfJhoaY2mL736p2vCUc47"
 )

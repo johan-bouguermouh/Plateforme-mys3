@@ -107,7 +107,7 @@ func TestValidateMultipartUpload_Success(t *testing.T) {
 	// Simule un multipart upload avec des tailles de parties valides
 	req := httptest.NewRequest(http.MethodPost, "/multipart-upload", nil)
 
-	// Création d'un ResponseRecorder pour capturer la réponse
+	// Création d'un ResponseRecorder pour capturer la réponse 
 	rr := httptest.NewRecorder()
 
 	// Utilisation du middleware ValidateMultipartUpload avec un handler qui renvoie 200 OK.

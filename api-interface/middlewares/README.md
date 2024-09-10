@@ -160,3 +160,162 @@ Suppression automatique des objets après une certaine durée (ex : après 365 j
 
 Valider les extensions des fichiers lors de l’upload pour s'assurer qu'elles sont autorisées (par exemple, permettre uniquement .jpg, .png, .txt).
 Rejeter les fichiers avec des extensions non autorisées.
+
+# Middlewares 
+
+Selon les standards AWS précisés ci-dessus, l'équipe a mis en place une liste de middleware permettant de se rapprocher au maximum de ces derniers : 
+
+- bucket_name_validation_middleware : Middleware de validation du format de nom de Bucket.
+- encryption_middleware : Middleware permettant d'encrypter et décrypter les données.
+- file_name_validation : Middleware de validation du format de nom de fichier.
+- file_size_validation : Middleware de validation de taille de fichier pour les upload direct / Multipart.
+- permissions_access_control_middleware : Middleware de contrôle des accès et permissions aux buckets et objets selon l'utilisateur.
+
+## 1. Bucket name validation 
+
+Ce middleware utilise des regex pour vérifier et valider le format du nom de Bucket : 
+- Taille min - max 
+- Prefixe, suffixe
+- Double dots (..)
+- etc ... 
+Selon les standards AWS S3.
+
+Exemple d'utilisation (fichier _test) : 
+
+```Go
+bucketName = "test-bucket-s3"
+validator := NewBucketNameValidator()
+result := validator.Validate(bucketName)
+if len(result) == 1 && result[0] == "Nom de bucket valide." {
+    t.Logf("Is '%s' valid? %v", test.name, result)
+} else {
+    t.Logf("For bucket name '%s', errors: %v", test.name, result)
+}
+```
+
+## 2. Encryption
+
+Ce middleware permet d'encrypter et de decrypter les données.
+
+Exemple d'utilisation (fichier _test) :
+```Go
+// Exemple de texte à chiffrer et déchiffrer
+	originalText := "This is some sensitive information"
+
+// Créer un ResponseRecorder pour capturer les erreurs
+recorder := newTestResponseWriter()
+
+// Chiffrement
+ciphertext, success := encrypt(recorder, originalText)
+if !success {
+    t.Fatalf("Encryption failed with status: %d", recorder.Code)
+}
+if len(ciphertext) == 0 {
+    t.Fatal("Encryption failed: resulting ciphertext is empty")
+}
+t.Logf("Encrypted ciphertext: %x", ciphertext)
+
+// Déchiffrement
+recorder = newTestResponseWriter() // Reset recorder for the next operation
+decryptedText, success := decrypt(recorder, ciphertext)
+if !success {
+    t.Fatalf("Decryption failed with status: %d", recorder.Code)
+}
+if decryptedText != originalText {
+    t.Errorf("Decrypted text does not match original text. Got: %s, Want: %s", decryptedText, originalText)
+} else {
+    t.Logf("Decrypted text matches original text: %s", decryptedText)
+}
+```
+
+## 3. File name validation 
+
+Ce middleware utilise des regex pour vérifier et valider le format du nom de fichier : 
+- taille min - max 
+- Prefixe
+- Suffixe
+- Double dots (..)
+- Patterns interdits 
+- etc ...
+selon les standards AWS S3.
+
+Exemple d'utilisation (fichier _test) : 
+
+```Go
+str = "Test-file-name"
+
+validator := NewFileNameValidator()
+
+result := validator.Validate(str)
+
+if len(result) == 1 && result[0] == "Nom valide." {
+    t.Logf("Is '%s' valid? %v", test.name, result)
+} else {
+    t.Logf("For file name '%s', errors: %v", test.name, result)
+}
+```
+
+## 4. File size validation 
+
+Ce middleware vérifie que le fichier respecte les limties max - min pour les upload direct et multiparse : 
+
+// Taille maximale des fichiers upload direct -> 5 Go.
+// Taille maximale avec Multipart Upload : 5 To.
+// Taille minimale pour les fichiers en Multipart Upload ( sauf dernier qui peut-être plus petit)
+
+Exemple d'utilisation (fichier _test) : 
+
+```Go
+// Utilisation du middleware ValidateDirectUpload avec un handler qui renvoie 200 OK.
+handler := ValidateDirectUpload(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    w.WriteHeader(http.StatusOK)
+}))
+
+// Exécution de la requête
+handler.ServeHTTP(rr, req)
+```
+
+## 5. Permission acces control 
+
+Ce middleware permet de gérer les accès aux buket et objet selon ACL (Access control list).
+
+Il se repose sur 2 entités principale : 
+- User 
+- Bucket 
+- Bucket_object (v2)
+
+Exemple ACL (list) : 
+"bucket1": {
+    "user1": "public-read",
+    "user2": "private",
+},
+"bucket2": {
+    "user3": "public-read",
+    "user4": "private",
+},
+
+Exemple d'utilisation (fichier _test) : 
+
+```Go 
+// Exemple de données de test 
+{
+    name:               "User not in ACL",
+    path:               "/bucket1/file",
+    user:               "user5",
+    authHeader:         "",
+    expectedStatusCode: http.StatusForbidden,
+}
+
+req := httptest.NewRequest("GET", tt.path, nil)
+req.Header.Set("X-User", tt.user)
+req.Header.Set("Authorization", tt.authHeader)
+
+rr := httptest.NewRecorder()
+middleware := PermissionMiddleware(handler)
+middleware.ServeHTTP(rr, req)
+
+if status := rr.Code; status != tt.expectedStatusCode {
+    t.Errorf("handler returned wrong status code: got %v want %v", status, tt.expectedStatusCode)
+}
+```
+
