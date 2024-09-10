@@ -73,3 +73,16 @@ func (b *BucketController) GetAllBuckets(c *fiber.Ctx) error {
 
     return c.JSON(buckets)
 }
+
+/** GetBucketByName permet de récupérer un Bucket par son nom */
+func (b *BucketController) GetBucketByName(c *fiber.Ctx) error {
+    name := c.Params("name")
+    bucket, err := b.bucketService.GetBucketByName(name)
+    if err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "error": err.Error(),
+        })
+    }
+
+    return c.JSON(bucket)
+}

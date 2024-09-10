@@ -27,7 +27,6 @@ func (bm *BucketModel) Insert(bucket *entity.Bucket) error {
 
 func (bm *BucketModel) GetAllBuckets() ([]entity.Bucket, error) {
     buckets, err := bm.bucketRepository.Find(func(b *entity.Bucket) bool {
-        // Appliquer un filtre si nécessaire, par exemple, retourner true pour inclure tous les buckets
         return true
     })
     if err != nil {
@@ -40,5 +39,14 @@ func (bm *BucketModel) GetAllBuckets() ([]entity.Bucket, error) {
         result = append(result, *bucket)
     }
     return result, nil
+}
+
+func (bm *BucketModel) GetBucketByName(name string) (*entity.Bucket, error) {
+    bucket := new(entity.Bucket)
+    err := bm.bucketRepository.Get(name, bucket)
+    if err != nil {
+        return nil, err
+    }
+    return bucket, nil
 }
 
