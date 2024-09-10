@@ -69,7 +69,7 @@ func (qb *QueryBuilder[T]) Insert(entity T) error {
     })
 }
 
-/** Met à jour une entité dans la base de données
+/** Renvoie un champ lié à une entité dans la base de données
     * @param entity T, l'entité à mettre à jour
     * @return error, une erreur si l'opération a échoué
 */
