@@ -2,7 +2,8 @@ package models
 
 // User model
 type User struct {
-	Name string `json:"name"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 type Role struct {
@@ -32,50 +33,52 @@ type Owner struct {
 type StorageClassType string
 
 const (
-    STANDARD              StorageClassType = "STANDARD"
-    REDUCED_REDUNDANCY    StorageClassType = "REDUCED_REDUNDANCY"
-    STANDARD_IA           StorageClassType = "STANDARD_IA"
-    ONEZONE_IA            StorageClassType = "ONEZONE_IA"
-    INTELLIGENT_TIERING   StorageClassType = "INTELLIGENT_TIERING"
-    GLACIER               StorageClassType = "GLACIER"
-    DEEP_ARCHIVE          StorageClassType = "DEEP_ARCHIVE"
+	STANDARD            StorageClassType = "STANDARD"
+	REDUCED_REDUNDANCY  StorageClassType = "REDUCED_REDUNDANCY"
+	STANDARD_IA         StorageClassType = "STANDARD_IA"
+	ONEZONE_IA          StorageClassType = "ONEZONE_IA"
+	INTELLIGENT_TIERING StorageClassType = "INTELLIGENT_TIERING"
+	GLACIER             StorageClassType = "GLACIER"
+	DEEP_ARCHIVE        StorageClassType = "DEEP_ARCHIVE"
 )
 
 type BucketType string
+
 const (
-    PUBLIC  BucketType = "PUBLIC"
-    PRIVATE BucketType = "PRIVATE"
+	PUBLIC  BucketType = "PUBLIC"
+	PRIVATE BucketType = "PRIVATE"
 )
 
 type VersioningStatus string
+
 const (
-    VersioningEnabled  VersioningStatus = "Enabled"
-    VersioningSuspended VersioningStatus = "Suspended"
-    VersioningDisabled  VersioningStatus = "Disabled"
+	VersioningEnabled   VersioningStatus = "Enabled"
+	VersioningSuspended VersioningStatus = "Suspended"
+	VersioningDisabled  VersioningStatus = "Disabled"
 )
 
 /** An object type for find Bucket in S3 */
 type Bucket struct {
-    /** Name of bucket */
-    Name string `json:"name"`
-    /** Date of creation */
-    CreationDate string `json:"creationDate"`
-    /** Owner of bucket */
-    Owner Owner `json:"owner"`
-    /** URI of bucket */
-    URI string `json:"uri"`
-    /** Type of bucket */
-    Type BucketType `json:"type"`
-    /**  Storage class, use for storage type : STANDARD, REDUCED_REDUNDANCY, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER, DEEP_ARCHIVE */
-    StorageClass StorageClassType `json:"storageClass"`
-    /** Versioning, use for versioning file */
-    Versioning VersioningStatus `json:"versioning"`
-    /** Encrytion, use for encryption file */
-    ObjectCount int64 `json:"objectCount"`
-    /** Size of bucket */
-    Size int64 `json:"size"`
-    /** Last modified date, use for check file integrity */
-    LastModified string `json:"lastModified"`
+	/** Name of bucket */
+	Name string `json:"name"`
+	/** Date of creation */
+	CreationDate string `json:"creationDate"`
+	/** Owner of bucket */
+	Owner Owner `json:"owner"`
+	/** URI of bucket */
+	URI string `json:"uri"`
+	/** Type of bucket */
+	Type BucketType `json:"type"`
+	/**  Storage class, use for storage type : STANDARD, REDUCED_REDUNDANCY, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER, DEEP_ARCHIVE */
+	StorageClass StorageClassType `json:"storageClass"`
+	/** Versioning, use for versioning file */
+	Versioning VersioningStatus `json:"versioning"`
+	/** Encrytion, use for encryption file */
+	ObjectCount int64 `json:"objectCount"`
+	/** Size of bucket */
+	Size int64 `json:"size"`
+	/** Last modified date, use for check file integrity */
+	LastModified string `json:"lastModified"`
 }
 
 /** An object type for find File in bucket S3 */
