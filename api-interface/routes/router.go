@@ -4,6 +4,7 @@ import (
 	"api-interface/database"
 	"api-interface/handlers"
 	Controller "api-interface/controllers"
+	Middlewares "api-interface/middlewares/bucket_creation"
 
 	"github.com/gofiber/fiber/v2"
 	"fmt"
@@ -39,5 +40,5 @@ func Router(app *fiber.App) {
 	protected.Get("/bucket/:bucketName/file/:fileName", database.DownloadFile)
 	protected.Delete("/bucket/:bucketName/file/:fileName", database.DeleteFile)
 
-	protected.Post("/v1/bucket", bc.InsertBucket)
+	protected.Post("/v1/bucket", Middlewares.BucketValidationMiddleware(),  bc.InsertBucket)
 }
