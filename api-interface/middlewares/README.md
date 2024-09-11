@@ -193,6 +193,11 @@ if len(result) == 1 && result[0] == "Nom de bucket valide." {
 }
 ```
 
+se rendre dans le sous-dossier du middlware : 
+```bash
+go test -v ./
+```
+
 ## 2. Encryption
 
 Ce middleware permet d'encrypter et de decrypter les données.
@@ -228,6 +233,11 @@ if decryptedText != originalText {
 }
 ```
 
+se rendre dans le sous-dossier du middlwares : 
+```bash
+go test -v ./
+```
+
 ## 3. File name validation 
 
 Ce middleware utilise des regex pour vérifier et valider le format du nom de fichier : 
@@ -255,6 +265,11 @@ if len(result) == 1 && result[0] == "Nom valide." {
 }
 ```
 
+se rendre dans le sous-dossier du middlwares : 
+```bash
+go test -v ./
+```
+
 ## 4. File size validation 
 
 Ce middleware vérifie que le fichier respecte les limties max - min pour les upload direct et multiparse : 
@@ -273,6 +288,11 @@ handler := ValidateDirectUpload(http.HandlerFunc(func(w http.ResponseWriter, r *
 
 // Exécution de la requête
 handler.ServeHTTP(rr, req)
+```
+
+se rendre dans le sous-dossier du middlwares : 
+```bash
+go test -v ./
 ```
 
 ## 5. Permission acces control 
@@ -319,3 +339,7 @@ if status := rr.Code; status != tt.expectedStatusCode {
 }
 ```
 
+se rendre dans le sous-dossier du middlwares : 
+```bash
+go test -v ./
+```
