@@ -34,7 +34,7 @@ func main() {
 	flag.Parse()
 
 	// Connected with database
-	db, err := bbolt.Open("my.db", 0600, nil)
+	db, err := bbolt.Open("./data/bolt.db", 0600, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
