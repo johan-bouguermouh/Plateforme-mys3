@@ -1,11 +1,5 @@
 package colorPrint
 
-import (
-	"fmt"
-	"reflect"
-	"strings"
-)
-
 // Séquences d'échappement ANSI pour les couleurs
 const (
 	Reset   = "\033[0m"
@@ -14,6 +8,63 @@ const (
 	Yellow  = "\033[33m"
 	Red     = "\033[31m"
 	Grey    = "\033[90m"
+    Black   = "\033[30m"
+    Purple  = "\033[35m"
+)
+
+// Sequence d'échapement ANSI pour les couleur en Bold
+const (
+    BlueB    = "\033[1;34m"
+    GreenB   = "\033[1;32m"
+    YellowB  = "\033[1;33m"
+    RedB     = "\033[1;31m"
+    GreyB    = "\033[1;90m"
+    BlackB   = "\033[1;30m"
+    PurpleB  = "\033[1;35m"
+)
+
+//Sequence d'échapement ANSI pour les couleur en Italic
+const (
+    BlueI    = "\033[3;34m"
+    GreenI   = "\033[3;32m"
+    YellowI  = "\033[3;33m"
+    RedI     = "\033[3;31m"
+    GreyI    = "\033[3;90m"
+    BlackI   = "\033[3;30m"
+    PurpleI  = "\033[3;35m"
+)
+
+//Sequence d'échapement ANSI pour les couleur en Underline
+const (
+    BlueU    = "\033[4;34m"
+    GreenU   = "\033[4;32m"
+    YellowU  = "\033[4;33m"
+    RedU     = "\033[4;31m"
+    GreyU    = "\033[4;90m"
+    BlackU   = "\033[4;30m"
+    PurpleU  = "\033[4;35m"
+)
+
+//Sequence d'échapement ANSI pour le Background des couleurs
+const (
+    BlueBg    = "\033[44m"
+    GreenBg   = "\033[42m"
+    YellowBg  = "\033[43m"
+    RedBg     = "\033[41m"
+    GreyBg    = "\033[100m"
+    BlackBg   = "\033[40m"
+    PurpleBg  = "\033[45m"
+)
+
+//Sequence d'échapement ANSI pour le Background des couleurs en Bold
+const (
+    BlueBgB    = "\033[1;44m"
+    GreenBgB   = "\033[1;42m"
+    YellowBgB  = "\033[1;43m"
+    RedBgB     = "\033[1;41m"
+    GreyBgB    = "\033[1;100m"
+    BlackBgB   = "\033[1;40m"
+    PurpleBgB  = "\033[1;45m"
 )
 
 func BlueP(content string) string {
@@ -36,75 +87,10 @@ func GreyP(content string) string {
     return Grey + content + Reset
 }
 
-func readObject(object any, index int) {
-    indent := "  "
-    useIndent := func(index int) string {
-        if index == 0 {
-            return ""
-        }
-        return strings.Repeat(indent, index)
-    }
-
-    val := reflect.ValueOf(object)
-    kind := val.Kind()
-
-    switch kind {
-    case reflect.Map:
-        fmt.Println(RedP("Type"), ": map")
-        for _, key := range val.MapKeys() {
-            value := val.MapIndex(key)
-            fmt.Println(useIndent(index), BlueP(fmt.Sprintf("%v", key)), ": ")
-            readObject(value.Interface(), index+1)
-        }
-    case reflect.Slice:
-        fmt.Println(useIndent(index), GreenP("[]"+val.Type().Elem().Name()), GreyP("{"))
-        for i := 0; i < val.Len(); i++ {
-            value := val.Index(i)
-            fmt.Println(useIndent(index), BlueP(fmt.Sprintf("[%d]", i)), ": ")
-            readObject(value.Interface(), index+1)
-            fmt.Println(useIndent(index), GreyP("}"))
-        }
-    case reflect.Struct:
-
-        for i := 0; i < val.NumField(); i++ {
-            field := val.Type().Field(i)
-            value := val.Field(i)
-            
-            
-            //Si la valeur n'est pas un objet quelque soit le type, on affiche la valeur
-            if value.Kind() != reflect.Struct && (value.Kind() == reflect.String ||
-                value.Kind() == reflect.Int ||
-                value.Kind() == reflect.Uint ||
-                value.Kind() == reflect.Bool) {
-                fmt.Println(useIndent(index), BlueP(field.Name), ": ", determineType(value.Interface()))
-                continue
-            }
-
-            fmt.Println(useIndent(index), BlueP(field.Name), GreenP(value.Type().Name()), ": ")
-            readObject(value.Interface(), index+1)
-        }
-    default:
-        fmt.Println(RedP("Type in Else "), ": ", kind)
-        fmt.Println(RedP("Type"), ": ", kind)
-        fmt.Println(useIndent(index), BlueP("Value"), ": ", object)
-    }
+func BlackP(content string) string {
+    return Black + content + Reset
 }
 
-func determineType(object any) any {
-    val := reflect.ValueOf(object)
-    kind := val.Kind()
-    switch kind {
-    case reflect.String:
-        return GreyP(`string `) + val.String()
-    case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-        return GreyP(kind.String()+" ") + YellowP(fmt.Sprintf("%d", val.Int()))
-    default:
-        println(RedP("Type in determineType Else of  determineType"), kind, kind == reflect.Struct)
-        return object
-    }
-}
-
-
-func ObjectLog(content ...any) {
-    readObject(content, 0)
+func PurpleP(content string) string {
+    return Purple + content + Reset
 }
