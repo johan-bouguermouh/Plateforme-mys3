@@ -35,6 +35,9 @@ RUN apk -U upgrade \
 # Exposes port 3000 because our program listens on that port
 EXPOSE 3000
 
+# Add the data volume
+VOLUME ["./api-interface/data"]
+
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/app/app"]
 
 # Run the application
