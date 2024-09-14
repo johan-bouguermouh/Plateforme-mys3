@@ -88,3 +88,41 @@ marke start
 cd api-interface
 go run app.go
 ```
+
+## Utilisation des routes
+
+### CreateBucket 
+
+Route : 
+http://127.0.0.1:3000/v1/bucket
+
+Exemple de body (bucket complet) : 
+<Bucket>
+    <name>this-is-a-valid-bucket-name-1234</name>
+    <creationDate>2024-09-11T12:34:56Z</creationDate>
+    <owner>
+        <ID>123456789</ID>
+        <DisplayName>JohnDoe</DisplayName>
+    </owner>
+    <uri>https://example.com/mybucket</uri>
+    <type>STANDARD</type>
+    <storageClass>STANDARD</storageClass>
+    <versioning>Enabled</versioning>
+    <objectCount>12345</objectCount>
+    <size>9876543210</size>
+    <lastModified>2024-09-11T12:34:56Z</lastModified>
+</Bucket>
+
+Exemple de body CreateBucketRequest (partiel, suffisant pour create) : 
+<Bucket>
+    <name>this-is-a-valid-bucket-name-1234</name>
+    <owner>
+        <ID>123456789</ID>
+        <DisplayName>JohnDoe</DisplayName>
+    </owner>
+    <type>STANDARD</type>
+    <versioning>Enabled</versioning>
+</Bucket>
+
+Afin de créer un bucket, il faut veiller à respecter les règles de nommage AWS : 
+Se référer à la partie ##1 du README middlewares
