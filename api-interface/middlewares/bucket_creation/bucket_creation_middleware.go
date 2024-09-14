@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	entities "api-interface/entities"
+	dto "api-interface/entities/bucketdtos"
 	"api-interface/handlers/errors"
 	bucket_name_validation "api-interface/middlewares/bucket_name_validation"
 	"encoding/xml"
@@ -21,9 +21,8 @@ func BucketValidationMiddleware() fiber.Handler {
         bucketName := c.Params("bucketName")
 
 
-        // Nouvelle instance de CreateBucketRequestStruct
-        bucketRequest := new(entities.CreateBucketRequestStruct)
-        if bodyRequest == nil {
+        // Nouvelle instance de CreateBucketRequestConfiguration
+        bucketRequest := new(dto.CreateBucketConfiguration)
         // Décoder le corps XML dans la struct bucketRequest
         if err := xml.Unmarshal(bodyRequest, bucketRequest); err != nil {
             return errors.HandleError(c, errors.ErrUnprocessableEntity, "Erreur de parsing XML: " + err.Error())
@@ -35,7 +34,6 @@ func BucketValidationMiddleware() fiber.Handler {
         }
 
         c.Locals("bucketRequest", bucketRequest)
-    }
 
 
         // Créez un validateur pour le nom du bucket
@@ -60,17 +58,52 @@ func BucketValidationMiddleware() fiber.Handler {
 }
 
 // validateBucketFields valide les champs du bucket
-func validateBucketFields(bucket *entities.CreateBucketRequestStruct, c *fiber.Ctx) error {
-    if bucket.Owner == (entities.Owner{}) {
-        return errors.HandleError(c, errors.ErrBadRequest, "Le bucket doit posséder un propriétaire.")
+func validateBucketFields(bucketConfig *dto.CreateBucketConfiguration, c *fiber.Ctx) error {
+    bucketConfig.XMLName.Local = "CreateBucketConfiguration"
+    bucketConfig.XMLNS = "http://s3.amazonaws.com/doc/2006-03-01/"
+
+    // Valider le champ LocationConstraint
+    if bucketConfig.LocationConstraint != nil {
+        if !dto.IsValidLocationConstraint(*bucketConfig.LocationConstraint) {
+            return errors.HandleError(c, errors.ErrBadRequest, "LocationConstraint invalide.")
+        }
+    } else {
+        bucketConfig.LocationConstraint = new(string)
+        *bucketConfig.LocationConstraint = "us-east-1"
     }
-    if bucket.Type == "" {
-        return errors.HandleError(c, errors.ErrBadRequest, "Le type de bucket doit être précisé.")
+
+    // Valider le champ Location
+    if bucketConfig.Location != nil {
+        if !dto.IsValidLocationConstraint(bucketConfig.Location.Name) {
+            return errors.HandleError(c, errors.ErrBadRequest, "Location invalide.")
+        }
+        if !dto.IsValidLocationType(bucketConfig.Location.Type) {
+            return errors.HandleError(c, errors.ErrBadRequest, "Type invalide, doit être de type 'Directory'.")
+        }
+    } else {
+        bucketConfig.Location = &dto.LocationInfo{
+            Name: "EU",
+            Type: "AvailabilityZone",
+        }
     }
-    if bucket.Versioning == "" {
-        return errors.HandleError(c, errors.ErrBadRequest, "Pas d'état de version pour le bucket.")
+
+    // Valider le champ Bucket
+    if bucketConfig.Bucket != nil {
+        if !dto.IsValidDataRedundancy(bucketConfig.Bucket.DataRedundancy) {
+            return errors.HandleError(c, errors.ErrBadRequest, "DataRedundancy invalide doit être de type 'SingleAvailabilityZone'.")
+        }
+        if !dto.IsValidBucketType(bucketConfig.Bucket.Type) {
+            return errors.HandleError(c, errors.ErrBadRequest, "Type invalide, doit être de type 'Directory'.")
+        }
+    } else {
+        bucketConfig.Bucket = &dto.BucketInfo{
+            DataRedundancy: "SingleAvailabilityZone",
+            Type:           "Directory",
+        }
     }
+
     return nil
+
 }
 
 // bucketExists vérifie si un dossier de bucket existe déjà

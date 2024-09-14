@@ -71,7 +71,7 @@ func (b *BucketController) InsertBucket(c *fiber.Ctx) error {
         CreationDate: utils.StringPointer(time.Now().String()),
         Owner:        owner,
         URI:          bucketUtils.GenerateBucketURI(bucketName),
-        Type:         "default",
+        Type:         "PUBLIC",
         Versioning:   "default",
     }
 
