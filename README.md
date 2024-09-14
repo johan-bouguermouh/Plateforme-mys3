@@ -37,6 +37,20 @@ Pour plus d'information rendez-vous sur le readme de `api-interface`
 
 ## Lancer le projet
 
+### Lancer le projet en mode dev
+
+Assurez vous que le package Air stable soit installer :
+
+```
+go install github.com/cosmtrek/air@v1.27.3
+```
+
+Lancer l'application en mode dev :
+
+```
+make start-dev
+```
+
 ### Lancer le projet dans un container Docker
 
 ```

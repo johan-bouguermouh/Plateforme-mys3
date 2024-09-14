@@ -4,7 +4,7 @@ image_name = gofiber:latest
 # Charger les variables d'environnement depuis le fichier .env
 ifneq (,$(wildcard ../.env))
     include ../.env
-    export $(shell ../load_env.exe)
+    export $(shell ./load_env.exe)
 endif
 
 help: ## This help dialog.
@@ -33,6 +33,10 @@ up-silent: ## Run local container in background
 	make delete-container-if-exist
 	docker run -d -p $(S3_PORT):$(S3_PORT) --name $(project_name) $(image_name) ./app
 
+up-dev: ## Run local container in foreground to see logs
+	make delete-container-if-exist
+	docker run -p $(S3_PORT):$(S3_PORT) --name $(project_name) -v ${PWD}:/app $(image_name) ./app
+
 up-silent-prefork: ## Run local container in background with prefork
 	make delete-container-if-exist
 	docker run -d -p $(S3_PORT):$(S3_PORT) --name $(project_name) $(image_name) ./app -prod
@@ -49,3 +53,5 @@ stop: ## Stop the container
 start: ## Start the container
 	docker start $(project_name)
 
+start-dev: ## Start the project in development mode with file watching
+	air
