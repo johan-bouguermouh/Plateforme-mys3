@@ -15,6 +15,28 @@
 
   > _Assurez-vous de le lancer en mode administrateur_
 
+### Intyégré les variables d'environnements au projet
+
+Vous trouverez un `.env.exemple` à la racine du projet. Créez un fichier `.env` au même emplacement est assuréez-vous de reprendre les même termes. Ces variable d'environnements servent à la fois au lancement du projet mais aussi à sa containerisation.
+
+```
+# Need Minio settings:
+S3_ENDPOINT="your-S3-endpoint"
+S3_PORT= 9000
+S3_ACCESSKEY= "your-S3-accesskey"
+S3_SECRETKEY= "your-S3-secretkey"
+S3_BUCKET= "your-minio-bucket"
+DB_BOLT_PATH=my.db
+```
+
+> Si toutefois les variables ne son pas déclarées vous pouvez faire tourner le projet en local avec la command d'execution suivante, après l'installation des modules necessaires :
+
+```powershell
+go run app.go
+```
+
+Dans de telles cironcstances le programme assignera automatiquement le port `9000` ainsi que le nom et le path du store **bbolt** à la racine de `api-interface` sous le nom de `mydb`
+
 ### Cloner le repository
 
 ```
