@@ -5,6 +5,7 @@ import (
 	"api-interface/handlers/errors"
 	bucket_name_validation "api-interface/middlewares/bucket_name_validation"
 	"encoding/xml"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -74,7 +75,8 @@ func validateBucketFields(bucket *entities.CreateBucketRequestStruct, c *fiber.C
 
 // bucketExists vérifie si un dossier de bucket existe déjà
 func bucketExists(bucketName string) bool {
-    bucketPath := filepath.Join("./buckets", bucketName)
+    bucketPath := filepath.Join("./data/buckets", bucketName)
     info, err := os.Stat(bucketPath)
+    fmt.Println("Bucket Path: ", info)
     return !os.IsNotExist(err) && info.IsDir()
 }
