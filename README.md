@@ -126,3 +126,78 @@ Exemple de body CreateBucketRequest (partiel, suffisant pour create) :
 
 Afin de créer un bucket, il faut veiller à respecter les règles de nommage AWS : 
 Se référer à la partie ##1 du README middlewares
+
+**UploadFiles**
+Route :
+POST /v1/bucket/:bucketName/upload
+
+Description :
+Télécharge un fichier dans le bucket spécifié.
+
+Exemple de Body :
+<UploadFileRequest>
+  <FileName>example.txt</FileName>
+  <FileContent>base64EncodedContent</FileContent>
+</UploadFileRequest>
+
+Réponse :
+<UploadResponse>
+  <message>Fichier téléchargé avec succès</message>
+  <path>buckets/your-bucket-name/example.txt</path>
+</UploadResponse>
+
+**Notes**:
+
+- FileContent doit être encodé en base64.
+- Le middleware UploadFileValidationMiddleware valide le format XML et les champs requis avant que la requête ne soit traitée.
+
+  **DeleteFile**
+  Route :
+ DELETE /v1/bucket/:bucketName/file/:fileName
+
+Description :
+Supprime un fichier du bucket spécifié.
+
+Exemple de Response :
+{
+    "message": "Fichier supprimé avec succès"
+}
+
+**Notes**:
+
+Le middleware FileExistenceMiddleware vérifie l'existence du fichier avant la suppression.
+
+**ListFiles**
+Route :
+GET /v1/bucket/:bucketName/files
+
+Description :
+Liste tous les fichiers dans le bucket spécifié.
+
+Exemple de Response :
+<BucketObject>
+    <Key>hero-bg.jpg</Key>
+    <LastModified>2024-09-14T16:44:37+02:00</LastModified>
+    <ETag></ETag>
+    <Size>116112</Size>
+    <StorageClass></StorageClass>
+    <Owner>
+        <UserKey></UserKey>
+        <DisplayName></DisplayName>
+        <Type></Type>
+        <URI></URI>
+        <ROLE>
+            <Name></Name>
+            <ID></ID>
+            <Type></Type>
+        </ROLE>
+        <SecretKey></SecretKey>
+    </Owner>
+    <Type>OBJECT</Type>
+    <URI>http://localhost:3000/buckets/johan/hero-bg.jpg</URI>
+    <BucketName>johan</BucketName>
+</BucketObject>
+
+**Notes**:
+
+Le middleware BucketExistenceMiddleware vérifie l'existence du bucket avant de lister les fichiers.
