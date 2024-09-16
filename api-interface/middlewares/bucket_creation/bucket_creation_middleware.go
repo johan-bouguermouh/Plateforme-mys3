@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	dto "api-interface/entities/bucketdtos"
+	dto "api-interface/entities/bucketDTOs"
 	"api-interface/handlers/errors"
 	bucket_name_validation "api-interface/middlewares/bucket_name_validation"
 	"encoding/xml"
