@@ -23,5 +23,8 @@ func CreateBucketDirectory(bucketName string) (string, error) {
         return "", fmt.Errorf("Erreur lors de la création du bucket : %v", err)
     }
 
+    // ON modfiier les \\ en /
+    bucketPath = filepath.ToSlash(bucketPath)
+
     return bucketPath, nil
 }
