@@ -55,3 +55,6 @@ start: ## Start the container
 
 start-dev: ## Start the project in development mode with file watching
 	air
+
+run-tests: ## Run tests
+	go test ./...

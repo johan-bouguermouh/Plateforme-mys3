@@ -1,4 +1,4 @@
-package bucketdtos
+package bucketDTOs
 
 import (
 	"encoding/xml"
