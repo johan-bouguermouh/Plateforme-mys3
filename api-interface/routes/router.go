@@ -1,13 +1,14 @@
 package routes
 
 import (
+	Controller "api-interface/controllers"
 	"api-interface/database"
 	"api-interface/handlers"
-	Controller "api-interface/controllers"
 	Middlewares "api-interface/middlewares/bucket_creation"
 
-	"github.com/gofiber/fiber/v2"
 	"fmt"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // Router configure les routes de l'application
@@ -40,5 +41,6 @@ func Router(app *fiber.App) {
 	protected.Get("/bucket/:bucketName/file/:fileName", database.DownloadFile)
 	protected.Delete("/bucket/:bucketName/file/:fileName", database.DeleteFile)
 
-	protected.Post("/v1/bucket", Middlewares.BucketValidationMiddleware(),  bc.InsertBucket)
+	// Create Bucket
+	app.Put("/:bucketName", Middlewares.BucketValidationMiddleware(),  bc.InsertBucket)
 }

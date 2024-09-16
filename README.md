@@ -91,113 +91,56 @@ go run app.go
 
 ## Utilisation des routes
 
-### CreateBucket 
+### CreateBucket
 
-Route : 
-http://127.0.0.1:3000/v1/bucket
+| Type de requête | Route          | Params     | Body Structure            |
+| --------------- | -------------- | ---------- | ------------------------- |
+| PUT             | /`:buckatName` | BucketName | CreateBucketConfiguration |
 
-Exemple de body (bucket complet) : 
-<Bucket>
-    <name>this-is-a-valid-bucket-name-1234</name>
-    <creationDate>2024-09-11T12:34:56Z</creationDate>
-    <owner>
-        <ID>123456789</ID>
-        <DisplayName>JohnDoe</DisplayName>
-    </owner>
-    <uri>https://example.com/mybucket</uri>
-    <type>STANDARD</type>
-    <storageClass>STANDARD</storageClass>
-    <versioning>Enabled</versioning>
-    <objectCount>12345</objectCount>
-    <size>9876543210</size>
-    <lastModified>2024-09-11T12:34:56Z</lastModified>
-</Bucket>
+#### Structure du Body pour CreateBucket
 
-Exemple de body CreateBucketRequest (partiel, suffisant pour create) : 
-<Bucket>
-    <name>this-is-a-valid-bucket-name-1234</name>
-    <owner>
-        <ID>123456789</ID>
-        <DisplayName>JohnDoe</DisplayName>
-    </owner>
-    <type>STANDARD</type>
-    <versioning>Enabled</versioning>
-</Bucket>
+```xml
+<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+   <LocationConstraint>string</LocationConstraint>
+   <Location>
+      <Name>string</Name>
+      <Type>string</Type>
+   </Location>
+   <Bucket>
+      <DataRedundancy>string</DataRedundancy>
+      <Type>string</Type>
+   </Bucket>
+</CreateBucketConfiguration>
+```
 
-Afin de créer un bucket, il faut veiller à respecter les règles de nommage AWS : 
-Se référer à la partie ##1 du README middlewares
+##### CreateBucketConfiguration (_Obligatoire_)
 
-**UploadFiles**
-Route :
-POST /v1/bucket/:bucketName/upload
+Balise de niveau racine pour les paramètres CreateBucketConfiguration.
 
-Description :
-Télécharge un fichier dans le bucket spécifié.
+> Obligatoire : Oui
 
-Exemple de Body :
-<UploadFileRequest>
-  <FileName>example.txt</FileName>
-  <FileContent>base64EncodedContent</FileContent>
-</UploadFileRequest>
+##### **[Bucket](https://docs.aws.amazon.com/fr_fr/AmazonS3/latest/API/API_CreateBucket.html#API_CreateBucket_RequestSyntax)**
 
-Réponse :
-<UploadResponse>
-  <message>Fichier téléchargé avec succès</message>
-  <path>buckets/your-bucket-name/example.txt</path>
-</UploadResponse>
+Spécifie les informations sur le bucket qui sera créé.
 
-**Notes**:
+Type : type de données [BucketInfo](https://docs.aws.amazon.com/fr_fr/AmazonS3/latest/API/API_BucketInfo.html)
 
-- FileContent doit être encodé en base64.
-- Le middleware UploadFileValidationMiddleware valide le format XML et les champs requis avant que la requête ne soit traitée.
+Obligatoire : Non
 
-  **DeleteFile**
-  Route :
- DELETE /v1/bucket/:bucketName/file/:fileName
+##### Location (_non obligatoire_)
 
-Description :
-Supprime un fichier du bucket spécifié.
+Spécifie l'emplacement où le bucket sera créé.
 
-Exemple de Response :
-{
-    "message": "Fichier supprimé avec succès"
-}
+Pour les buckets de répertoire, le type d’emplacement est Zone de disponibilité.
 
-**Notes**:
+Type : type de données [LocationInfo](https://docs.aws.amazon.com/fr_fr/AmazonS3/latest/API/API_LocationInfo.html)
 
-Le middleware FileExistenceMiddleware vérifie l'existence du fichier avant la suppression.
+> Obligatoire : Non
 
-**ListFiles**
-Route :
-GET /v1/bucket/:bucketName/files
+##### **[LocationConstraint](https://docs.aws.amazon.com/fr_fr/AmazonS3/latest/API/API_CreateBucket.html#API_CreateBucket_RequestSyntax)**
 
-Description :
-Liste tous les fichiers dans le bucket spécifié.
+Spécifie la région dans laquelle le compartiment sera créé. Vous pouvez choisir une région pour optimiser la latence, minimiser les coûts ou répondre aux exigences réglementaires. Par exemple, si vous résidez en Europe, vous trouverez probablement avantageux de créer des compartiments dans la région Europe (Irlande). Pour plus d'informations, consultez [Accès à un compartiment](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) dans le *Guide de l'utilisateur Amazon S3* .
 
-Exemple de Response :
-<BucketObject>
-    <Key>hero-bg.jpg</Key>
-    <LastModified>2024-09-14T16:44:37+02:00</LastModified>
-    <ETag></ETag>
-    <Size>116112</Size>
-    <StorageClass></StorageClass>
-    <Owner>
-        <UserKey></UserKey>
-        <DisplayName></DisplayName>
-        <Type></Type>
-        <URI></URI>
-        <ROLE>
-            <Name></Name>
-            <ID></ID>
-            <Type></Type>
-        </ROLE>
-        <SecretKey></SecretKey>
-    </Owner>
-    <Type>OBJECT</Type>
-    <URI>http://localhost:3000/buckets/johan/hero-bg.jpg</URI>
-    <BucketName>johan</BucketName>
-</BucketObject>
+Si vous ne spécifiez pas de région, le bucket est créé dans la région USA Est (Virginie du Nord) (us-east-1) par défaut.
 
-**Notes**:
-
-Le middleware BucketExistenceMiddleware vérifie l'existence du bucket avant de lister les fichiers.
+Valid Values: `af-south-1 | ap-east-1 | ap-northeast-1 | ap-northeast-2 | ap-northeast-3 | ap-south-1 | ap-south-2 | ap-southeast-1 | ap-southeast-2 | ap-southeast-3 | ca-central-1 | cn-north-1 | cn-northwest-1 | EU | eu-central-1 | eu-north-1 | eu-south-1 | eu-south-2 | eu-west-1 | eu-west-2 | eu-west-3 | me-south-1 | sa-east-1 | us-east-2 | us-gov-east-1 | us-gov-west-1 | us-west-1 | us-west-2`

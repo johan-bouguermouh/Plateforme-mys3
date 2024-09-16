@@ -1,14 +1,15 @@
 package controllers
 
 import (
-    utils "api-interface/utils"
-    bucketUtils "api-interface/utils/bucket"
-    entities "api-interface/entities"
-    "api-interface/models"
-    "api-interface/handlers/errors"
+	entities "api-interface/entities"
+	"api-interface/handlers/errors"
+	"api-interface/models"
+	utils "api-interface/utils"
+	bucketUtils "api-interface/utils/bucket"
 
-    "github.com/gofiber/fiber/v2"
-    "time"
+	"time"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 /** Bucket Controller permet de gérer les requêtes liées aux Buckets */
@@ -34,39 +35,47 @@ func NewBucketController() (*BucketController, error) {
 func (b *BucketController) InsertBucket(c *fiber.Ctx) error {
 
     // Utiliser le middleware pour la validation des buckets
-    bucketRequest, ok := c.Locals("bucketRequest").(*entities.CreateBucketRequestStruct)
-    if !ok {
-        return fiber.NewError(fiber.StatusInternalServerError, "Erreur interne.")
+    bucketName := c.Locals("bucketName").(string)
+
+    var bucket *entities.Bucket
+    var owner entities.Owner = entities.Owner{
+        UserKey:     "000",
+        DisplayName: "default",
+        Type:       "default",
+        URI:        "default",
+        ROLE: entities.Role{
+            ID:   "0",
+            Name: "default",
+            Type: "default",
+        },
+        SecretKey: "000",
     }
 
-    // Générer l'URI et créer le répertoire pour le bucket
-    bucketURI := bucketUtils.GenerateBucketURI(bucketRequest.Name)
-    bucketPath, err := bucketUtils.CreateBucketDirectory(bucketRequest.Name)
+    bucketPath, err := bucketUtils.CreateBucketDirectory(bucketName)
     if err != nil {
         return errors.HandleError(c, errors.ErrInternalServerError, "Erreur lors de la création du répertoire du bucket")
     }
 
-    defaultBucketCreationDate := time.Now()
-
     // Création de l'entité Bucket
-    bucket := &entities.Bucket{
-        Name:         bucketRequest.Name,
-        CreationDate: utils.StringPointer(defaultBucketCreationDate.String()),
-        Owner:        bucketRequest.Owner,
-        URI:          bucketURI,
-        Type:         bucketRequest.Type,
-        Versioning:   bucketRequest.Versioning,
+
+    //nous créons le svaleurs par defaut
+    bucket = &entities.Bucket{
+        Name:         bucketName,
+        CreationDate: utils.StringPointer(time.Now().String()),
+        Owner:        owner,
+        URI:          bucketUtils.GenerateBucketURI(bucketName),
+        Type:         "PUBLIC",
+        Versioning:   "default",
     }
 
     // Insérer le bucket dans la base de données
     if err = b.bucketService.Insert(bucket); err != nil {
         return errors.HandleError(c, errors.ErrInternalServerError, "Erreur lors de l'insertion du bucket dans la base de données")
     }
-
+    
+    BASE_URL := c.BaseURL()
     return c.JSON(fiber.Map{
-        "message": "Bucket inséré avec succès",
-        "uri":     bucketURI,
-        "path":    bucketPath,
+        "Location": BASE_URL+"/"+bucketPath,
     })
 }
 

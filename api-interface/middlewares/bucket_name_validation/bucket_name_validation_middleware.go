@@ -27,7 +27,7 @@ func NewBucketNameValidator() *Validator {
 		suffixPattern:   regexp.MustCompile(`(-s3alias|--ol-s3|\.mrap|--x-s3)$`),
 		ipAddressPattern: regexp.MustCompile(`^\d{1,3}(\.\d{1,3}){3}$`),
 		dotsPattern:     regexp.MustCompile(`\.\.`),
-		namePattern:     regexp.MustCompile(`^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$`),
+		namePattern:     regexp.MustCompile(`^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$`),
 	}
 }
 

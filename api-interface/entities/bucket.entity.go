@@ -5,16 +5,16 @@ import (
 )
 
 type Bucket struct {
-    Name         string          `xml:"name"`
-    CreationDate *string          `xml:"creationDate"`
-    Owner        Owner           `xml:"owner"`
-    URI          string          `xml:"uri"`
-    Type         BucketType      `xml:"type"`
-    StorageClass *StorageClassType `xml:"storageClass"`
-    Versioning   VersioningStatus `xml:"versioning"`
-    ObjectCount  *int64           `xml:"objectCount"`
-    Size         *int64           `xml:"size"`
-    LastModified *string          `xml:"lastModified"`
+    Name         string          `xml:"name" json:"name"`
+    CreationDate *string          `xml:"creationDate" json:"creationDate"`
+    Owner        Owner           `xml:"owner" json:"owner"`
+    URI          string          `xml:"uri" json:"uri"`
+    Type         BucketType      `xml:"type" json:"type"`
+    StorageClass *StorageClassType `xml:"storageClass" json:"storageClass"`
+    Versioning   VersioningStatus `xml:"versioning" json:"versioning"`
+    ObjectCount  *int64           `xml:"objectCount" json:"objectCount"`
+    Size         *int64           `xml:"size" json:"size"`
+    LastModified *string          `xml:"lastModified" json:"lastModified"`
 }
 
 type CreateBucketRequestStruct struct {
