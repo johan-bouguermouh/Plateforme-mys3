@@ -41,5 +41,6 @@ func Router(app *fiber.App) {
 	protected.Get("/bucket/:bucketName/file/:fileName", database.DownloadFile)
 	protected.Delete("/bucket/:bucketName/file/:fileName", database.DeleteFile)
 
+	// Create Bucket
 	app.Put("/:bucketName", Middlewares.BucketValidationMiddleware(),  bc.InsertBucket)
 }

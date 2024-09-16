@@ -28,9 +28,13 @@ func BucketValidationMiddleware() fiber.Handler {
             return errors.HandleError(c, errors.ErrUnprocessableEntity, "Erreur de parsing XML: " + err.Error())
         }
 
+        errFormatXML := validateBucketFields(bucketRequest, c)
         // Valider les champs du bucket
-        if err := validateBucketFields(bucketRequest, c); err != nil {
-            return err
+        if errFormatXML != "" {
+            return errors.HandleError(c, errors.ErrBadRequest, errFormatXML)
+            // ON renvoie une response d'erreur
+        } else {
+            fmt.Println("Validation des champs du bucket réussie.")
         }
 
         c.Locals("bucketRequest", bucketRequest)
@@ -47,7 +51,7 @@ func BucketValidationMiddleware() fiber.Handler {
 
         // Vérifier si le bucket existe déjà
         if bucketExists(bucketName) {
-            return errors.HandleError(c, errors.ErrBadRequest, "Le bucket avec ce nom existe déjà.")
+            return errors.HandleError(c, errors.ErrConflict, "Le bucket avec ce nom existe déjà.")
         }
 
         // Attacher les données validées au contexte
@@ -58,16 +62,17 @@ func BucketValidationMiddleware() fiber.Handler {
 }
 
 // validateBucketFields valide les champs du bucket
-func validateBucketFields(bucketConfig *dto.CreateBucketConfiguration, c *fiber.Ctx) error {
+func validateBucketFields(bucketConfig *dto.CreateBucketConfiguration, c *fiber.Ctx) string {
     bucketConfig.XMLName.Local = "CreateBucketConfiguration"
     bucketConfig.XMLNS = "http://s3.amazonaws.com/doc/2006-03-01/"
 
     // Valider le champ LocationConstraint
     if bucketConfig.LocationConstraint != nil {
         if !dto.IsValidLocationConstraint(*bucketConfig.LocationConstraint) {
-            return errors.HandleError(c, errors.ErrBadRequest, "LocationConstraint invalide.")
+            return "LocationConstraint invalide."
         }
     } else {
+        fmt.Println("LocationConstraint non défini, défini sur 'us-east-1'")
         bucketConfig.LocationConstraint = new(string)
         *bucketConfig.LocationConstraint = "us-east-1"
     }
@@ -75,10 +80,11 @@ func validateBucketFields(bucketConfig *dto.CreateBucketConfiguration, c *fiber.
     // Valider le champ Location
     if bucketConfig.Location != nil {
         if !dto.IsValidLocationConstraint(bucketConfig.Location.Name) {
-            return errors.HandleError(c, errors.ErrBadRequest, "Location invalide.")
+            return "Location invalide"
         }
         if !dto.IsValidLocationType(bucketConfig.Location.Type) {
-            return errors.HandleError(c, errors.ErrBadRequest, "Type invalide, doit être de type 'Directory'.")
+
+            return "Location Type invalide, doit être de type 'AvailabilityZone'."
         }
     } else {
         bucketConfig.Location = &dto.LocationInfo{
@@ -90,10 +96,10 @@ func validateBucketFields(bucketConfig *dto.CreateBucketConfiguration, c *fiber.
     // Valider le champ Bucket
     if bucketConfig.Bucket != nil {
         if !dto.IsValidDataRedundancy(bucketConfig.Bucket.DataRedundancy) {
-            return errors.HandleError(c, errors.ErrBadRequest, "DataRedundancy invalide doit être de type 'SingleAvailabilityZone'.")
+            return "DataRedundancy invalide doit être de type 'SingleAvailabilityZone'."
         }
         if !dto.IsValidBucketType(bucketConfig.Bucket.Type) {
-            return errors.HandleError(c, errors.ErrBadRequest, "Type invalide, doit être de type 'Directory'.")
+            return"Bucket Type invalide, doit être de type 'Directory'."
         }
     } else {
         bucketConfig.Bucket = &dto.BucketInfo{
@@ -102,7 +108,7 @@ func validateBucketFields(bucketConfig *dto.CreateBucketConfiguration, c *fiber.
         }
     }
 
-    return nil
+    return ""
 
 }
 

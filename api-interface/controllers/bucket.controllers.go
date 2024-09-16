@@ -51,13 +51,6 @@ func (b *BucketController) InsertBucket(c *fiber.Ctx) error {
         SecretKey: "000",
     }
 
-    //bucketRequest, ok := c.Locals("bucketRequest").(*entities.CreateBucketRequestStruct)
-    // if !ok && bucketRequest != nil {
-    //     return errors.HandleError(c, errors.ErrInternalServerError, "Erreur lors de la récupération des données du bucket")
-    // }
-
-    // Générer l'URI et créer le répertoire pour le bucket
-    bucketURI := bucketUtils.GenerateBucketURI(bucketName)
     bucketPath, err := bucketUtils.CreateBucketDirectory(bucketName)
     if err != nil {
         return errors.HandleError(c, errors.ErrInternalServerError, "Erreur lors de la création du répertoire du bucket")
@@ -80,11 +73,9 @@ func (b *BucketController) InsertBucket(c *fiber.Ctx) error {
         return errors.HandleError(c, errors.ErrInternalServerError, "Erreur lors de l'insertion du bucket dans la base de données")
     }
     
-
+    BASE_URL := c.BaseURL()
     return c.JSON(fiber.Map{
-        "message": "Bucket inséré avec succès",
-        "uri":     bucketURI,
-        "path":    bucketPath,
+        "Location": BASE_URL+"/"+bucketPath,
     })
 }
 

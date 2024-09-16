@@ -40,6 +40,8 @@ var (
 	ErrForbidden           = New(fiber.StatusForbidden, "Forbidden")
 	// 404
 	ErrNotFound            = New(fiber.StatusNotFound, "Not Found")
+	// 409
+	ErrConflict            = New(fiber.StatusConflict, "Conflict")
 	// 413
 	ErrRequestEntityTooLarge = New(fiber.StatusRequestEntityTooLarge, "Request entity too large")
 	// 422
