@@ -128,7 +128,7 @@ jobs:
       - name: Setup kubectl
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_CONTENT }}" > $HOME/.kube/config
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
       # Étape 9 : Appliquer les fichiers Kubernetes
       - name: Deploy to Kubernetes
