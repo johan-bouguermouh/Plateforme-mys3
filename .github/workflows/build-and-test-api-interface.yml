@@ -93,7 +93,7 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USER }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }} .
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
 
       - name: Push Docker image for development
         if: github.ref == 'refs/heads/main'
