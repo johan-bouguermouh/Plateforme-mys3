@@ -4,9 +4,10 @@ metadata:
   name: api-interface-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   rules:
-    - host: your-domain.com
+    - host: johan.cdpi.atelier.ovh
       http:
         paths:
           - path: /
@@ -18,5 +19,5 @@ spec:
                   number: 9000
   tls:
     - hosts:
-        - your-domain.com
-      secretName: tls-secret
+        - johan.cdpi.atelier.ovh
+      secretName: johan.cdpi.atelier.ovh
