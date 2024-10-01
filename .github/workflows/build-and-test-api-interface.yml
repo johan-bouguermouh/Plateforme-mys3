@@ -84,7 +84,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd api-interface
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-interface:dev-${{ env.TIMESTAMP }} .
+          docker build -t ${{ secrets.DOCKERHUB_USER }}/api-interface:dev-${{ env.TIMESTAMP }} .
 
       - name: Build Docker image for production (tag)
         # Utilise une condition pour exécuter les étapes uniquement si la référence commence par refs/tags/.
@@ -92,20 +92,20 @@ jobs:
         run: |
           cd api-interface
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }} .
+          docker build -t ${{ secrets.DOCKERHUB_USER }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }} .
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
 
       - name: Push Docker image for development
         if: github.ref == 'refs/heads/main'
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/api-interface:dev-${{ env.TIMESTAMP }} ${{ secrets.DOCKER_USERNAME }}/api-interface:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-interface:dev-${{ env.TIMESTAMP }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-interface:latest
+          docker tag ${{ secrets.DOCKERHUB_USER }}/api-interface:dev-${{ env.TIMESTAMP }} ${{ secrets.DOCKERHUB_USER }}/api-interface:latest
+          docker push ${{ secrets.DOCKERHUB_USER }}/api-interface:dev-${{ env.TIMESTAMP }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/api-interface:latest
 
       - name: Push Docker image for production
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }}
