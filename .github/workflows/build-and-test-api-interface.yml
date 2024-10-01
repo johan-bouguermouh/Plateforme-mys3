@@ -112,3 +112,45 @@ jobs:
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
           docker push ${{ secrets.DOCKERHUB_USER }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }}
+  # Dépend du job docker-hub.
+  # Déploie l'application sur un cluster Kubernetes.
+  # Utilise des conditions pour différencier les déploiements de développement et de production.
+  kubernetes:
+    runs-on: ubuntu-latest
+    needs: docker-hub
+    if: success()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Étape 8 : Configurer kubectl
+      - name: Setup kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" > $HOME/.kube/config
+
+      # Étape 9 : Appliquer les fichiers Kubernetes
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+          kubectl apply -f ingress.yaml
+
+      # Étape 10 : Extraire les informations du déploiement et du service
+      - name: Extract Kubernetes deployment and service info
+        run: |
+          DEPLOYMENT_NAME=api-interface-deployment
+          SERVICE_NAME=api-interface-service
+
+          REPLICAS=$(kubectl get deployment $DEPLOYMENT_NAME -o jsonpath='{.status.replicas}')
+          READY_REPLICAS=$(kubectl get deployment $DEPLOYMENT_NAME -o jsonpath='{.status.readyReplicas}')
+          SERVICE_TYPE=$(kubectl get svc $SERVICE_NAME -o jsonpath='{.spec.type}')
+          EXTERNAL_IP=$(kubectl get svc $SERVICE_NAME -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          PORT=$(kubectl get svc $SERVICE_NAME -o jsonpath='{.spec.ports[0].port}')
+
+          echo "REPLICAS=$REPLICAS" >> $GITHUB_ENV
+          echo "READY_REPLICAS=$READY_REPLICAS" >> $GITHUB_ENV
+          echo "SERVICE_TYPE=$SERVICE_TYPE" >> $GITHUB_ENV
+          echo "EXTERNAL_IP=$EXTERNAL_IP" >> $GITHUB_ENV
+          echo "PORT=$PORT" >> $GITHUB_ENV
