@@ -90,7 +90,7 @@ jobs:
         run: |
           cd api-interface
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          docker build -t ${{ secrets.DOCKERHUB_USER }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }} .
+          echo docker build -t ${{ secrets.DOCKERHUB_USER }}/api-interface:${TAG_NAME}-${{ env.TIMESTAMP }} .
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
