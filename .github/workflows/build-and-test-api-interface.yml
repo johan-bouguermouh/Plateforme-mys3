@@ -79,6 +79,11 @@ jobs:
       - name: Get current timestamp
         run: echo "TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)" >> $GITHUB_ENV
 
+      - name: Debug Docker Hub credentials
+      run: |
+        echo "DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}"
+        echo "DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}" | sed 's/./*/g'
+
       - name: Build Docker image for development (branch main)
         if: github.ref == 'refs/heads/main'
         run: |
