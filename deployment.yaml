@@ -27,20 +27,6 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "0.5"
-          envFrom:
-            - configMapRef:
-                name: api-interface-config
-          env:
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: api-interface-secret
-                  key: DB_PASSWORD
-            - name: API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: api-interface-secret
-                  key: API_KEY
           volumeMounts:
             - name: data-volume
               mountPath: /app/data
