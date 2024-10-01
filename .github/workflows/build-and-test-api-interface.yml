@@ -29,10 +29,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Go ${{ matrix.go-version }}
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.18" # Remplacez par la version de Go que vous utilisez
 
       - name: Build
         run: |
@@ -47,10 +47,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Go ${{ matrix.go-version }}
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.18" # Remplacez par la version de Go que vous utilisez
 
       - name: Run tests
         run: |
@@ -78,14 +78,28 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd api-interface
-          docker build -t ${{ secrets.DOCKERHUB_USER }}/mys3:dev-${{ env.TIMESTAMP }} .
+          docker build \
+            --build-arg S3_ENDPOINT=${{ secrets.S3_ENDPOINT }} \
+            --build-arg S3_PORT=${{ secrets.S3_PORT }} \
+            --build-arg S3_ACCESSKEY=${{ secrets.S3_ACCESSKEY }} \
+            --build-arg S3_SECRETKEY=${{ secrets.S3_SECRETKEY }} \
+            --build-arg S3_BUCKET=${{ secrets.S3_BUCKET }} \
+            --build-arg DB_BOLT_PATH=${{ secrets.DB_BOLT_PATH }} \
+            -t ${{ secrets.DOCKERHUB_USER }}/mys3:dev-${{ env.TIMESTAMP }} .
 
       - name: Build Docker image for production (tag)
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd api-interface
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          docker build -t ${{ secrets.DOCKERHUB_USER }}/mys3:${TAG_NAME}-${{ env.TIMESTAMP }} .
+          docker build \
+            --build-arg S3_ENDPOINT=${{ secrets.S3_ENDPOINT }} \
+            --build-arg S3_PORT=${{ secrets.S3_PORT }} \
+            --build-arg S3_ACCESSKEY=${{ secrets.S3_ACCESSKEY }} \
+            --build-arg S3_SECRETKEY=${{ secrets.S3_SECRETKEY }} \
+            --build-arg S3_BUCKET=${{ secrets.S3_BUCKET }} \
+            --build-arg DB_BOLT_PATH=${{ secrets.DB_BOLT_PATH }} \
+            -t ${{ secrets.DOCKERHUB_USER }}/mys3:${TAG_NAME}-${{ env.TIMESTAMP }} .
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
