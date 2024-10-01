@@ -24,13 +24,10 @@ RUN mkdir ./static
 COPY ./static ./static
 
 # `boilerplate` should be replaced here as well
-COPY --from=build /go/src/api-interface/app .
-COPY --from=build /go/src/api-interface/.env .
+COPY --from=build /go/src/api-interface/app /app/
 
-# Add packages
-RUN apk -U upgrade \
-    && apk add --no-cache dumb-init ca-certificates \
-    && chmod +x /app/app
+# Copy .env file if it exists
+RUN if [ -f /go/src/api-interface/.env ]; then cp /go/src/api-interface/.env /app/; fi
 
 # Add packages
 RUN apk -U upgrade \
@@ -38,7 +35,7 @@ RUN apk -U upgrade \
     && chmod +x /app/app
 
 # Export environment variables from .env file
-RUN export $(grep -v '^#' app/app/.env | xargs)
+RUN if [ -f /app/.env ]; then export $(grep -v '^#' /app/.env | xargs); fi
 
 # Expose the port specified in the .env file
 ENV S3_PORT=${S3_PORT:-9000}
@@ -48,5 +45,3 @@ EXPOSE ${S3_PORT}
 VOLUME ["/app/data"]
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/app/app"]
-
-# Run the application
