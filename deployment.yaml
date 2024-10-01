@@ -5,7 +5,7 @@ metadata:
   labels:
     app: api-interface
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: api-interface
@@ -17,8 +17,16 @@ spec:
       containers:
         - name: api-interface
           image: johanbouguermouh/api-interface:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 9000
+          ressources:
+            requests:
+              memory: "512Mi"
+              cpu: "0.2"
+            limits:
+              memory: "1gi"
+              cpu: "0.5"
           envFrom:
             - configMapRef:
                 name: api-interface-config
