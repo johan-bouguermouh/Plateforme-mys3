@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: api-interface
-          image: your-dockerhub-username/api-interface:latest
+          image: johanbouguermouh/api-interface:latest
           ports:
             - containerPort: 9000
           envFrom:
