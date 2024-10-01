@@ -20,12 +20,12 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
-          ressource:
+          resources: # Correction ici
             requests:
               memory: "512Mi"
               cpu: "0.2"
             limits:
-              memory: "1gi"
+              memory: "1Gi"
               cpu: "0.5"
           envFrom:
             - configMapRef:
