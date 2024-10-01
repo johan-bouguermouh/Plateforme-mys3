@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: api-interface
-          image: johanbouguermouh/api-interface:latest
+          image: johanbouguermouh/mys3:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
