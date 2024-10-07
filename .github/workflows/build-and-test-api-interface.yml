@@ -164,7 +164,7 @@ jobs:
 
     steps:
       - name: Send email
-        uses: julb/action-post-google-chat-message@v1
+        uses: julb/action-post-googlechat-message@v1
         with:
           message: |
             The deployment was successful.
