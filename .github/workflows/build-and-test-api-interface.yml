@@ -173,4 +173,4 @@ jobs:
             - Service type: ${{ env.SERVICE_TYPE }}
             - External IP: ${{ env.EXTERNAL_IP }}
             - Port: ${{ env.PORT }}
-          google-chat-webhook-url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          gchat_webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
