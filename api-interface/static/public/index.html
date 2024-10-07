@@ -36,149 +36,209 @@
 </html> -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plateforme MyS3</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div class="container">
-        <div class="text-center mt-5">
-            <h1>Plateforme MyS3</h1>
-            <div class="mt-4">
-                <button id="registerBtn" class="btn btn-primary">Register</button>
-                <button id="loginBtn" class="btn btn-secondary">Login</button>
-            </div>
+      <div class="text-center mt-5">
+        <h1>Welcolme to Plateforme MyS3 V1.0.3</h1>
+        <div class="mt-4">
+          <button id="registerBtn" class="btn btn-primary">Register</button>
+          <button id="loginBtn" class="btn btn-secondary">Login</button>
         </div>
+      </div>
 
-       
-        <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="registerModalLabel">Register</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="register-form">
-                            <div class="mb-3">
-                                <label for="reg-username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="reg-username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="reg-password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="reg-password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Register</button>
-                        </form>
-                        <div id="register-response"></div>
-                    </div>
-                </div>
+      <div
+        class="modal fade"
+        id="registerModal"
+        tabindex="-1"
+        aria-labelledby="registerModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="registerModalLabel">Register</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
+            <div class="modal-body">
+              <form id="register-form">
+                <div class="mb-3">
+                  <label for="reg-username" class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="reg-username"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="reg-password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="reg-password"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+              </form>
+              <div id="register-response"></div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="login-form">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </form>
-                        <div id="login-response"></div>
-                    </div>
-                </div>
+      <div
+        class="modal fade"
+        id="loginModal"
+        tabindex="-1"
+        aria-labelledby="loginModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="loginModalLabel">Login</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
+            <div class="modal-body">
+              <form id="login-form">
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+              </form>
+              <div id="login-response"></div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('registerBtn').addEventListener('click', function() {
-            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-            registerModal.show();
+      document
+        .getElementById("registerBtn")
+        .addEventListener("click", function () {
+          var registerModal = new bootstrap.Modal(
+            document.getElementById("registerModal")
+          );
+          registerModal.show();
         });
 
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
+      document
+        .getElementById("loginBtn")
+        .addEventListener("click", function () {
+          var loginModal = new bootstrap.Modal(
+            document.getElementById("loginModal")
+          );
+          loginModal.show();
         });
 
-        document.getElementById('register-form')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('reg-username').value;
-            const password = document.getElementById('reg-password').value;
+      document
+        .getElementById("register-form")
+        ?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("reg-username").value;
+          const password = document.getElementById("reg-password").value;
 
-            const response = await fetch('http://localhost:3000/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name: username, password: password })
-            });
+          const response = await fetch("http://localhost:3000/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: username, password: password }),
+          });
 
-            const result = await response.text();
-            document.getElementById('register-response').textContent = result;
+          const result = await response.text();
+          document.getElementById("register-response").textContent = result;
         });
 
-        document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+      document
+        .getElementById("login-form")
+        ?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
 
-            const response = await fetch('http://localhost:3000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name: username, password: password })
-            });
+          const response = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: username, password: password }),
+          });
 
-            const result = await response.json();
-            if (response.ok) {
-                document.getElementById('login-response').textContent = `Token: ${result.token}`;
-                localStorage.setItem('authToken', result.token); // Stocke le token
-            } else {
-                document.getElementById('login-response').textContent = `Error: ${result.message}`;
-            }
+          const result = await response.json();
+          if (response.ok) {
+            document.getElementById(
+              "login-response"
+            ).textContent = `Token: ${result.token}`;
+            localStorage.setItem("authToken", result.token); // Stocke le token
+          } else {
+            document.getElementById(
+              "login-response"
+            ).textContent = `Error: ${result.message}`;
+          }
         });
 
-        async function accessProtectedRoute() {
-            const token = localStorage.getItem('authToken'); // Récupère le token
-            if (!token) {
-                console.log('No token found');
-                return;
-            }
-
-            const response = await fetch('http://localhost:3000/bucket/myNewBucket/files/', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` // Inclut le token dans l'en-tête
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-            } else {
-                console.log('Error:', response.statusText);
-            }
+      async function accessProtectedRoute() {
+        const token = localStorage.getItem("authToken"); // Récupère le token
+        if (!token) {
+          console.log("No token found");
+          return;
         }
 
-       
-    </script>
-</body>
-</html>
+        const response = await fetch(
+          "http://localhost:3000/bucket/myNewBucket/files/",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`, // Inclut le token dans l'en-tête
+            },
+          }
+        );
 
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+        } else {
+          console.log("Error:", response.statusText);
+        }
+      }
+    </script>
+  </body>
+</html>
