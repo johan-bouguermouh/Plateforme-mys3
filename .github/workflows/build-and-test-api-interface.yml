@@ -168,9 +168,5 @@ jobs:
         with:
           message: |
             The deployment was successful.
-            - Replicas: ${{ env.REPLICAS }}
-            - Ready replicas: ${{ env.READY_REPLICAS }}
-            - Service type: ${{ env.SERVICE_TYPE }}
-            - External IP: ${{ env.EXTERNAL_IP }}
-            - Port: ${{ env.PORT }}
+            https://johan.cdpi.atelier.ovh/
           gchat_webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
